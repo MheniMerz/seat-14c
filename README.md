@@ -33,6 +33,8 @@ device). Systems are registered in `src/index.ts`.
 | `src/dial.ts`           | Flight dial: pinch and twist, snaps to 5/10/25/45; look + pinch steps     |
 | `src/flight-timer.ts`   | Take off button, focus clock, progress line under the active card         |
 | `src/landing.ts`        | Chime, Done stack, Not yet, saving the flight, summary card               |
+| `src/route.ts`          | Fictional destinations by cumulative miles; postcards when reached        |
+| `src/seatback.ts`       | Seat-back screen: in-flight map of the planned and flown route            |
 | `src/cabin-components.ts` | ECS components for all of the above                                     |
 | `tests/`                | Scripted checks against the managed browser (see below)                   |
 
@@ -65,6 +67,7 @@ npx @iwsdk/cli dev up --allow-browser-automation
 npx @iwsdk/cli browser run tests/checkin-smoke.mjs   # check-in page
 npx @iwsdk/cli browser run tests/cards-smoke.mjs     # card rules
 npx @iwsdk/cli browser run tests/dial-smoke.mjs      # dial, take off, clock
+npx @iwsdk/cli browser run tests/route-unit.mjs      # miles, streak, postcards
 ./tests/cards-input.sh        # gaze + pinch and pinch-grab on cards
 ./tests/dial-input.sh         # pinch-and-twist, gaze + pinch dial / Take off
 ./tests/calibration-input.sh  # timeout, resting hands, Raise / Lower, poke

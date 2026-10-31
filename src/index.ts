@@ -15,6 +15,7 @@ import { FlightSystem } from './flight-state.js';
 import { FlightTimerSystem } from './flight-timer.js';
 import { InputTuningSystem } from './input-tuning.js';
 import { LandingSystem } from './landing.js';
+import { SeatbackSystem } from './seatback.js';
 import { TraySystem } from './tray.js';
 
 World.create(
@@ -30,5 +31,6 @@ World.create(
   world.registerSystem(DialSystem);
   world.registerSystem(FlightTimerSystem);
   world.registerSystem(LandingSystem);
+  world.registerSystem(SeatbackSystem);
   mountCheckIn(world);
 });

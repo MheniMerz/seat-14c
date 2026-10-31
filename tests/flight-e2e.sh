@@ -47,10 +47,10 @@ xr set-transform '{"device":"hand-right","position":{"x":0.3,"y":1.0,"z":0}}'
 sleep 0.5
 check "card chosen, dial at 5 min" "$(field "$(run state.mjs)" "f\"{plan['taskId'] is not None} {plan['minutes']}\"")" "True 5"
 
-run fast-clock.mjs >/dev/null
 POS=$(run positions.mjs)
 look_pinch takeoff-button
 check "Take off starts cruise" "$(phase)" "cruise"
+run fast-clock.mjs >/dev/null
 sleep 3.5
 check "lands when the clock runs out" "$(phase)" "landing"
 
@@ -86,4 +86,4 @@ check "streak grew from yesterday" "$(field "$CHECKIN" "progress['streakDays']")
 check "miles: 100 + 40 for 5 min" "$(field "$CHECKIN" "progress['totalMiles'] >= 140")" "True"
 check "finished task saved as done" "$(field "$CHECKIN" "','.join(tasks)")" "Write Devpost description:done,Review flight dial design:open"
 check "check-in shows only the open task" "$(field "$CHECKIN" "','.join(titles)")" "Review flight dial design"
-check "stats line updated" "$(field "$CHECKIN" "stats")" "*miles flown · 3-day streak"
+check "stats line updated" "$(field "$CHECKIN" "stats")" "*miles flown · 3-day streak · next stop *"

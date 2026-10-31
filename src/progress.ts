@@ -6,6 +6,7 @@ import {
   saveProgress,
   saveTasks,
 } from './storage.js';
+import { Destination, destinationsBetween } from './route.js';
 
 export type FlightOutcome = 'done' | 'later';
 
@@ -13,6 +14,8 @@ export type FlightRecord = {
   outcome: FlightOutcome;
   focusMinutes: number;
   miles: number;
+  /** Destinations reached on this flight; each stamps a postcard. */
+  reached: Destination[];
   progress: Progress;
 };
 
@@ -54,7 +57,13 @@ export function recordFlight(
   const today = localDate(now);
 
   const progress = loadProgress();
+  const reached = destinationsBetween(progress.totalMiles, progress.totalMiles + miles);
   progress.totalMiles += miles;
+  for (const destination of reached) {
+    if (!progress.postcards.includes(destination.name)) {
+      progress.postcards.push(destination.name);
+    }
+  }
   progress.streakDays = nextStreak(progress, today);
   progress.lastFlightDate = today;
   saveProgress(progress);
@@ -68,5 +77,5 @@ export function recordFlight(
     }
   }
 
-  return { outcome, focusMinutes, miles, progress };
+  return { outcome, focusMinutes, miles, reached, progress };
 }

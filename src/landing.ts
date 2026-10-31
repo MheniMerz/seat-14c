@@ -227,8 +227,13 @@ export class LandingSystem extends createSystem({
         285,
       );
       ctx.fillStyle = '#eef1fb';
+      const reached = record.reached[record.reached.length - 1];
       ctx.fillText(
-        anotherFlight ? 'Fly again, or finish for today.' : 'All tasks flown. See you tomorrow.',
+        reached
+          ? `Reached ${reached.name}. Postcard stamped.`
+          : anotherFlight
+            ? 'Fly again, or finish for today.'
+            : 'All tasks flown. See you tomorrow.',
         w / 2,
         345,
       );

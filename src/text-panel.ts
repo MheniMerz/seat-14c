@@ -26,10 +26,11 @@ export function createTextPanel(
   name: string,
   widthM: number,
   heightM: number,
+  pixelsPerMetre = PIXELS_PER_METRE,
 ): TextPanel {
   const canvas = document.createElement('canvas');
-  canvas.width = Math.round(widthM * PIXELS_PER_METRE);
-  canvas.height = Math.round(heightM * PIXELS_PER_METRE);
+  canvas.width = Math.round(widthM * pixelsPerMetre);
+  canvas.height = Math.round(heightM * pixelsPerMetre);
   const ctx = canvas.getContext('2d')!;
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;

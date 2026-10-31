@@ -1,4 +1,5 @@
 import { VisibilityState, World } from '@iwsdk/core';
+import { nextDestination } from './route.js';
 import {
   loadProgress,
   loadTasks,
@@ -33,9 +34,11 @@ export function mountCheckIn(world: World): void {
     tasks = all.filter((task) => task.status === 'open').slice(0, MAX_TASKS);
     archived = all.filter((task) => !tasks.includes(task));
     const progress = loadProgress();
+    const next = nextDestination(progress.totalMiles);
     stats.textContent =
       progress.totalMiles > 0
-        ? `${progress.totalMiles.toLocaleString()} miles flown · ${progress.streakDays}-day streak`
+        ? `${progress.totalMiles.toLocaleString()} miles flown · ${progress.streakDays}-day streak` +
+          (next ? ` · next stop ${next.name}` : '')
         : 'First flight. Add up to three things to finish.';
     if (tasks.length === 0) {
       tasks.push(emptyTask());
