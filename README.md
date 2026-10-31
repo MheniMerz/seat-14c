@@ -96,8 +96,11 @@ npx @iwsdk/cli browser run tests/route-unit.mjs      # miles, streak, postcards
 The `.sh` tests drive emulated hands and gaze through `npx @iwsdk/cli xr`; the
 only dev shortcut in `flight-e2e.sh` is a faster flight clock.
 
-## Before release
+## Deploy
 
-Set `world.features.gaze.showDebugReticle` to `false` in `iwsdk.config.json`.
+Every push to `main` builds and publishes to GitHub Pages
+(`.github/workflows/deploy.yml`). One-time setup: repository Settings → Pages
+→ Source: **GitHub Actions**. Production builds hide the gaze debug reticle,
+turn off gaze console diagnostics and leave out the dev controls and emulator.
 
 - IWER emulator controls: https://iwsdk.dev/guides/02-testing-experience.html#iwer-controls

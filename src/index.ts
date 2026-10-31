@@ -23,9 +23,25 @@ import { SoundscapeSystem } from './soundscape.js';
 import { StepsSystem } from './steps.js';
 import { TraySystem } from './tray.js';
 
+// Gaze debugging aids stay in dev builds only: production shows no reticle
+// and logs nothing, whatever iwsdk.config.json says.
+const options = import.meta.env.DEV
+  ? projectOptions
+  : {
+      ...projectOptions,
+      features: {
+        ...projectOptions.features,
+        gaze: {
+          ...projectOptions.features?.gaze,
+          showDebugReticle: false,
+          logDiagnostics: false,
+        },
+      },
+    };
+
 World.create(
   document.getElementById('scene-container') as HTMLDivElement,
-  projectOptions,
+  options,
 ).then((world) => {
   // Order matters: later systems look up the tray in init().
   world.registerSystem(InputTuningSystem);
