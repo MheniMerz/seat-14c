@@ -64,3 +64,8 @@ export const LandingAction = {
 export const LandingButton = createComponent('LandingButton', {
   action: { type: Types.Enum, default: LandingAction.Later, enum: LandingAction },
 });
+
+/** One step of the active task, shown beside the Now card in cruise. */
+export const StepRow = createComponent('StepRow', {
+  index: { type: Types.Int8, default: 0 },
+});

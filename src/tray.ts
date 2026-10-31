@@ -48,6 +48,8 @@ export const TRAY_LAYOUT = {
     position: [0, -0.015, -0.168] as const,
     slotX: [-0.15, 0.15, 0],
     cardY: 0.03,
+    /** In cruise the pocket cards sink out of sight. */
+    stowedY: -0.035,
     cardScale: 0.8,
   },
   dial: { position: [0.155, 0, -0.07] as const },

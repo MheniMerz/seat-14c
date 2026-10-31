@@ -12,6 +12,7 @@ import {
   DialRoot,
   DoneStack,
   LandingButton,
+  StepRow,
   TakeoffButton,
   TaskCard,
   TrayHeightButton,
@@ -26,4 +27,5 @@ export default defineComponents([
   TrayHeightButton,
   DoneStack,
   LandingButton,
+  StepRow,
 ]);

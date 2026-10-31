@@ -35,6 +35,8 @@ device). Systems are registered in `src/index.ts`.
 | `src/landing.ts`        | Chime, Done stack, Not yet, saving the flight, summary card               |
 | `src/audio.ts`          | Synthesized cabin sounds (WebAudio): clicks, detents, seat-belt chime     |
 | `src/feedback.ts`       | Click on every press, pick/drop sounds on every grab                      |
+| `src/steps.ts`          | Active task's steps beside the Now card; look reveals, pinch/poke ticks   |
+| `src/focus.ts`          | Cruise focus: dims the passthrough room, fades all but the active card    |
 | `src/route.ts`          | Fictional destinations by cumulative miles; postcards when reached        |
 | `src/seatback.ts`       | Seat-back screen: in-flight map of the planned and flown route            |
 | `src/cabin-components.ts` | ECS components for all of the above                                     |
@@ -61,7 +63,8 @@ device). Systems are registered in `src/index.ts`.
 
 ## Scripted tests
 
-Start the dev server with automation enabled, then run any of these:
+Start the dev server with automation enabled, then run `./tests/run-all.sh`
+for one line per suite, or any single suite:
 
 ```sh
 npx @iwsdk/cli dev up --allow-browser-automation
@@ -73,6 +76,7 @@ npx @iwsdk/cli browser run tests/route-unit.mjs      # miles, streak, postcards
 ./tests/cards-input.sh        # gaze + pinch and pinch-grab on cards
 ./tests/dial-input.sh         # pinch-and-twist, gaze + pinch dial / Take off
 ./tests/calibration-input.sh  # timeout, resting hands, Raise / Lower, poke
+./tests/steps-input.sh        # steps reveal, tick by gaze and poke; cabin dims
 ./tests/gaze-off.sh           # every look + pinch action by hand ray, gaze off
 ./tests/flight-e2e.sh         # one full flight with real emulated input
 ./tests/capture-sheet.sh      # writes docs/greybox-flight.png

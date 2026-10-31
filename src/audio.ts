@@ -116,6 +116,12 @@ export function playDetent(): void {
   tone({ frequency: 2400, duration: 0.025, volume: 0.1, type: 'square' });
 }
 
+/** A step ticked off (rising) or unticked (falling). */
+export function playTick(done: boolean): void {
+  log(done ? 'tick' : 'untick');
+  tone({ frequency: done ? 880 : 1320, endFrequency: done ? 1320 : 880, duration: 0.12, volume: 0.14 });
+}
+
 /** The two-tone seat-belt chime ("bing-bong"). */
 export function playSeatbeltChime(): void {
   log('seatbeltChime');

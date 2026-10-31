@@ -14,9 +14,11 @@ import { DialSystem } from './dial.js';
 import { FlightSystem } from './flight-state.js';
 import { FeedbackSystem } from './feedback.js';
 import { FlightTimerSystem } from './flight-timer.js';
+import { FocusSystem } from './focus.js';
 import { InputTuningSystem } from './input-tuning.js';
 import { LandingSystem } from './landing.js';
 import { SeatbackSystem } from './seatback.js';
+import { StepsSystem } from './steps.js';
 import { TraySystem } from './tray.js';
 
 World.create(
@@ -33,6 +35,8 @@ World.create(
   world.registerSystem(FlightTimerSystem);
   world.registerSystem(LandingSystem);
   world.registerSystem(SeatbackSystem);
+  world.registerSystem(StepsSystem);
+  world.registerSystem(FocusSystem);
   world.registerSystem(FeedbackSystem);
   mountCheckIn(world);
 });

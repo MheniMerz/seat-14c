@@ -26,7 +26,7 @@ import {
   flightPlan,
 } from './flight-state.js';
 import type { FlightOutcome } from './progress.js';
-import { loadOpenTasks } from './storage.js';
+import { loadOpenTasks, loadTasks } from './storage.js';
 import { TRAY_LAYOUT, TraySystem } from './tray.js';
 
 /** A released card this close to the Now slot (metres) snaps into it. */
@@ -84,6 +84,10 @@ export class CardSystem extends createSystem({
           // A new flight after landing deals a fresh hand of open tasks.
           if (this.lastPhase === FlightPhase.WindDown) this.disposeCards();
           if (this.queries.cards.entities.size === 0) this.spawnCards();
+        }
+        // Pocket cards sink out of sight in cruise and come back after.
+        if (phase === FlightPhase.Cruise || this.lastPhase === FlightPhase.Cruise) {
+          this.relayout();
         }
         this.lastPhase = phase;
       }),
@@ -144,6 +148,37 @@ export class CardSystem extends createSystem({
             ? 0.18
             : 0;
       face.emissiveIntensity += (target - face.emissiveIntensity) * k;
+    }
+  }
+
+  /** The card on the Now stand, if any. */
+  nowCard(): Entity | undefined {
+    for (const card of this.queries.cards.entities) {
+      if (card.getValue(TaskCard, 'place') === CardPlace.Now) return card;
+    }
+    return undefined;
+  }
+
+  /** True while the given card, or its grabbable body, is hovered. */
+  isHovered(card: Entity): boolean {
+    if (card.hasComponent(Hovered)) return true;
+    for (const body of this.queries.bodies.entities) {
+      if (this.cardOf(body) === card && body.hasComponent(Hovered)) return true;
+    }
+    return false;
+  }
+
+  /** Repaint a card's face from storage, e.g. after a step is ticked. */
+  refreshCard(taskId: string): void {
+    const task = loadTasks().find((t) => t.id === taskId);
+    if (task == null) return;
+    for (const body of this.queries.bodies.entities) {
+      const card = this.cardOf(body);
+      if (card?.getValue(TaskCard, 'taskId') !== taskId) continue;
+      const face = faceMaterial(body);
+      face.map?.dispose();
+      face.map = createCardTexture(task, card.getValue(TaskCard, 'order')!);
+      face.needsUpdate = true;
     }
   }
 
@@ -261,7 +296,7 @@ export class CardSystem extends createSystem({
         case CardPlace.Pocket:
           p.set([
             pocket.slotX[pocketSlot++ % pocket.slotX.length],
-            pocket.cardY,
+            flightPhase.peek() === FlightPhase.Cruise ? pocket.stowedY : pocket.cardY,
             pocket.position[2],
           ]);
           this.euler.set(90 * deg, 0, 0);

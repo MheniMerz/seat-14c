@@ -1,7 +1,8 @@
 // Prints world positions of named scene objects as {name: {x,y,z}}.
 import { findAppFrame } from './helpers.mjs';
 const NAMES = ['card-1', 'card-2', 'card-3', 'dial-knob', 'dial', 'takeoff-button',
-  'done-stack', 'landing-later', 'summary-again', 'summary-finish', 'tray-raise', 'tray-lower'];
+  'done-stack', 'landing-later', 'summary-again', 'summary-finish', 'tray-raise', 'tray-lower',
+  'step-1', 'step-2', 'step-3'];
 export default async function run({ page }) {
   const app = await findAppFrame(page);
   return JSON.stringify(await app.evaluate((names) => {
