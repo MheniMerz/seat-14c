@@ -16,6 +16,7 @@ check() { if [ "$2" = "$3" ]; then echo "PASS $1 ($2)"; else echo "FAIL $1 (got 
 
 cli browser run tests/board.mjs >/dev/null
 xr set-input-mode '{"mode":"hand"}'
+xr set-connected '{"device":"gaze","connected":true}'
 
 # Gaze at card 3 on the tray, pinch with the right hand.
 xr look-at '{"device":"gaze","target":{"x":0.14,"y":1.368,"z":-0.355}}'

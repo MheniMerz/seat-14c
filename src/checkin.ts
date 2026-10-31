@@ -1,4 +1,5 @@
 import { VisibilityState, World } from '@iwsdk/core';
+import { unlockAudio } from './audio.js';
 import { nextDestination } from './route.js';
 import {
   loadProgress,
@@ -144,6 +145,7 @@ export function mountCheckIn(world: World): void {
     tasks = tasks.filter((task) => task.title.trim() !== '');
     tasks.forEach((task) => (task.title = task.title.trim()));
     persist();
+    unlockAudio();
     world.launchXR();
   });
 

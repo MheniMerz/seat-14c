@@ -16,6 +16,7 @@ check() { if [ "$2" = "$3" ]; then echo "PASS $1 ($2)"; else echo "FAIL $1 (got 
 
 cli browser run tests/board.mjs >/dev/null
 xr set-input-mode '{"mode":"hand"}'
+xr set-connected '{"device":"gaze","connected":true}'
 xr look-at '{"device":"gaze","target":{"x":0,"y":2.5,"z":-1}}'
 
 # Pinch the knob and twist the wrist 25 degrees clockwise (seen from above).

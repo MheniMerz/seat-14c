@@ -12,6 +12,7 @@ import { CardSystem } from './cards.js';
 import { mountCheckIn } from './checkin.js';
 import { DialSystem } from './dial.js';
 import { FlightSystem } from './flight-state.js';
+import { FeedbackSystem } from './feedback.js';
 import { FlightTimerSystem } from './flight-timer.js';
 import { InputTuningSystem } from './input-tuning.js';
 import { LandingSystem } from './landing.js';
@@ -32,5 +33,6 @@ World.create(
   world.registerSystem(FlightTimerSystem);
   world.registerSystem(LandingSystem);
   world.registerSystem(SeatbackSystem);
+  world.registerSystem(FeedbackSystem);
   mountCheckIn(world);
 });

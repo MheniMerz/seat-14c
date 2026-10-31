@@ -19,6 +19,7 @@ check() { if [[ "$2" == $3 ]]; then echo "PASS $1 ($2)"; else echo "FAIL $1 (got
 board() {
   cli browser run tests/board-only.mjs >/dev/null
   xr set-input-mode '{"mode":"hand"}'
+  xr set-connected '{"device":"gaze","connected":true}'
   xr look-at '{"device":"gaze","target":{"x":0,"y":2.5,"z":-1}}'
 }
 

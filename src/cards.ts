@@ -17,6 +17,7 @@ import {
   Vector3,
 } from '@iwsdk/core';
 import { CardBody, CardPlace, TaskCard } from './cabin-components.js';
+import { playSlot } from './audio.js';
 import { CARD_SIZE, createCardTexture } from './card-texture.js';
 import {
   flightOutcome,
@@ -158,6 +159,7 @@ export class CardSystem extends createSystem({
     card.setValue(TaskCard, 'place', CardPlace.Now);
     flightPlan.taskId.value = card.getValue(TaskCard, 'taskId')!;
     this.relayout();
+    playSlot();
   }
 
   /**
@@ -176,6 +178,7 @@ export class CardSystem extends createSystem({
       }
     }
     this.relayout();
+    playSlot();
     flightOutcome.value = outcome;
   }
 

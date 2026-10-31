@@ -16,6 +16,7 @@ import {
   RayInteractable,
   SRGBColorSpace,
 } from '@iwsdk/core';
+import { playDetent } from './audio.js';
 import { DialKnob, DialRoot } from './cabin-components.js';
 import {
   FLIGHT_LENGTHS,
@@ -110,6 +111,7 @@ export class DialSystem extends createSystem({
     if (held) {
       const index = nearestStop(knob.rotation.y);
       if (index !== this.previewIndex) {
+        if (this.previewIndex >= 0) playDetent();
         this.previewIndex = index;
         this.redraw();
       }
@@ -140,6 +142,7 @@ export class DialSystem extends createSystem({
     if (flightPhase.peek() !== FlightPhase.Preflight) return;
     const current = FLIGHT_LENGTHS.indexOf(flightPlan.minutes.peek() as never);
     flightPlan.minutes.value = FLIGHT_LENGTHS[(current + 1) % FLIGHT_LENGTHS.length];
+    playDetent();
   }
 
   private label(): string {

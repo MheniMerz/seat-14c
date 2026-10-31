@@ -5,15 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { AssetType, defineAssets } from '@iwsdk/core';
+import { defineAssets } from '@iwsdk/core';
 
-const publicAssetUrl = (filePath: string): string =>
-  `${import.meta.env.BASE_URL}${filePath.replace(/^\/+/u, '')}`;
-
-export default defineAssets({
-  'audio-chime': {
-    url: publicAssetUrl('audio/chime.mp3'),
-    type: AssetType.Audio,
-    name: 'Seat-belt chime',
-  },
-});
+// Cabin sounds are synthesized at runtime (src/audio.ts) and every model is
+// procedural, so the manifest is empty.
+export default defineAssets({});

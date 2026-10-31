@@ -27,6 +27,7 @@ echo "check-in: $(run checkin-fill.mjs)"
 cli browser interact --input-json '{"steps":[{"action":"click","locator":{"role":"button","name":"Board"}}]}' >/dev/null
 sleep 1
 xr set-input-mode '{"mode":"hand"}'
+xr set-connected '{"device":"gaze","connected":true}'
 xr look-at '{"device":"gaze","target":{"x":0,"y":2.5,"z":-1}}'
 # Hands left resting from an earlier run calibrate within a second, so the
 # flight may already be past calibration here.

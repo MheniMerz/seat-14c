@@ -13,6 +13,7 @@ cli xr exit || true
 sleep 1
 cli browser run tests/board.mjs
 cli xr set-input-mode --input-json '{"mode":"hand"}'
+cli xr set-connected --input-json '{"device":"gaze","connected":true}'
 cli xr set-transform --input-json '{"device":"hand-left","position":{"x":-0.3,"y":1.0,"z":0}}'
 cli xr set-transform --input-json '{"device":"hand-right","position":{"x":0.3,"y":1.0,"z":0}}'
 cli xr look-at --input-json '{"device":"gaze","target":{"x":0,"y":2.5,"z":-1}}'

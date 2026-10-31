@@ -1,5 +1,4 @@
 import {
-  AudioUtils,
   BoxGeometry,
   CanvasTexture,
   createSystem,
@@ -16,6 +15,7 @@ import {
   SRGBColorSpace,
   Vector3,
 } from '@iwsdk/core';
+import { playSeatbeltChime } from './audio.js';
 import { DoneStack, LandingAction, LandingButton } from './cabin-components.js';
 import { CardSystem, DONE_STACK_TOP } from './cards.js';
 import {
@@ -31,7 +31,6 @@ import { loadOpenTasks } from './storage.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
 import { TRAY_LAYOUT, TraySystem } from './tray.js';
 
-const CHIME_URL = `${import.meta.env.BASE_URL}audio/chime.mp3`;
 const BUTTON = { width: 0.12, height: 0.014, depth: 0.045 };
 /** Summary buttons sit this far apart so gaze can tell them apart. */
 const SUMMARY_BUTTON_SPACING = 0.15;
@@ -160,7 +159,7 @@ export class LandingSystem extends createSystem({
     }
 
     if (landing) {
-      AudioUtils.createOneShot(this.world, CHIME_URL, { volume: 0.8 });
+      playSeatbeltChime();
       this.drawPrompt();
       this.placeAboveTray(this.promptEntity, 0.03);
     }

@@ -1,4 +1,5 @@
 import { createSystem, signal, VisibilityState } from '@iwsdk/core';
+import { soundLog } from './audio.js';
 import type { FlightOutcome } from './progress.js';
 
 /**
@@ -121,6 +122,7 @@ export class FlightSystem extends createSystem({}) {
       setPhase: setFlightPhase,
       phases: IMMERSIVE_PHASES,
       world: this.world,
+      sounds: () => soundLog.splice(0),
       plan: () => ({
         taskId: flightPlan.taskId.peek(),
         minutes: flightPlan.minutes.peek(),
