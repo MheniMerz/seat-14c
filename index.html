@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#14182a" />
+    <link rel="icon" href="data:," />
+    <title>Seat 14C</title>
+    <link rel="stylesheet" href="/src/checkin.css" />
+  </head>
+  <body>
+    <div id="scene-container"></div>
+
+    <main id="checkin" hidden>
+      <header class="checkin-header">
+        <p class="eyebrow">Check-in</p>
+        <h1>Seat 14C</h1>
+        <p id="stats" class="stats"></p>
+      </header>
+
+      <section aria-labelledby="tasks-heading">
+        <h2 id="tasks-heading">What will you finish on this flight?</h2>
+        <ol id="task-list" class="task-list"></ol>
+        <button id="add-task" type="button" class="secondary">
+          + Add a task
+        </button>
+      </section>
+
+      <footer class="checkin-footer">
+        <button id="board" type="button" class="primary" disabled>Board</button>
+        <p id="board-status" class="board-status" role="status"></p>
+      </footer>
+    </main>
+
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>
