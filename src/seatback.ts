@@ -1,5 +1,4 @@
 import {
-  BoxGeometry,
   createSystem,
   effect,
   Entity,
@@ -11,6 +10,7 @@ import { flightClock, flightPhase, FlightPhase, flightPlan } from './flight-stat
 import { LandingSystem } from './landing.js';
 import { legIndex, nextDestination, positionAt, ROUTE } from './route.js';
 import { loadProgress, MILES_PER_MINUTE } from './storage.js';
+import { PALETTE, roundedSlabGeometry } from './models.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
 import { TRAY_DEFAULTS, TraySystem } from './tray.js';
 
@@ -112,7 +112,9 @@ export class SeatbackSystem extends createSystem({}) {
       ? `Next: ${next.name} · ${next.miles - this.baseMiles - flown} mi`
       : 'Route complete';
     let banner = '';
-    if (phase === FlightPhase.Preflight) {
+    if (phase === FlightPhase.Landing) {
+      banner = 'Landed · drop the card on Done, or tap Not yet';
+    } else if (phase === FlightPhase.Preflight) {
       const passed = ROUTE.filter(
         (d) => d.miles > this.baseMiles && d.miles <= this.baseMiles + planned,
       );
@@ -247,11 +249,21 @@ export class SeatbackSystem extends createSystem({}) {
     group.position.set(0, 0, SEAT_BACK.z);
 
     const shell = new Mesh(
-      new BoxGeometry(SEAT_BACK.width, SEAT_BACK.height, 0.03),
-      new MeshStandardMaterial({ color: 0x252c3d, roughness: 0.85 }),
+      roundedSlabGeometry(SEAT_BACK.width, SEAT_BACK.height, 0.03, 0.04),
+      new MeshStandardMaterial({ color: PALETTE.seatBack, roughness: 0.85 }),
     );
     shell.name = 'seat-back-shell';
+    // Stand the slab up: its depth becomes height.
+    shell.rotation.x = Math.PI / 2;
     shell.position.set(0, SEAT_BACK.bottomY + SEAT_BACK.height / 2, -0.016);
+    const bezel = new Mesh(
+      roundedSlabGeometry(SCREEN.width + 0.014, SCREEN.height + 0.014, 0.004, 0.012),
+      new MeshStandardMaterial({ color: 0x0b0f1c, roughness: 0.4 }),
+    );
+    bezel.name = 'seat-back-bezel';
+    bezel.rotation.x = Math.PI / 2;
+    bezel.position.set(0, SEAT_BACK.bottomY + SEAT_BACK.height - SCREEN.height / 2 - 0.025, 0);
+    group.add(bezel);
     group.add(shell);
 
     this.screen = createTextPanel(
@@ -263,7 +275,7 @@ export class SeatbackSystem extends createSystem({}) {
     this.screen.mesh.position.set(
       0,
       SEAT_BACK.bottomY + SEAT_BACK.height - SCREEN.height / 2 - 0.025,
-      0.0005,
+      0.0025,
     );
     group.add(this.screen.mesh);
 

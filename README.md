@@ -40,6 +40,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/focus.ts`          | Cruise focus: dims the passthrough room, fades all but the active card    |
 | `src/route.ts`          | Fictional destinations by cumulative miles; postcards when reached        |
 | `src/seatback.ts`       | Seat-back screen: in-flight map of the planned and flown route            |
+| `src/models.ts`         | Cabin palette and the rounded-slab model helper                           |
 | `src/cabin-components.ts` | ECS components for all of the above                                     |
 | `tests/`                | Scripted checks against the managed browser (see below)                   |
 

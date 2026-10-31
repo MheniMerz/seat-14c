@@ -19,6 +19,7 @@ import {
 import { CardBody, CardPlace, TaskCard } from './cabin-components.js';
 import { playSlot } from './audio.js';
 import { CARD_SIZE, createCardTexture } from './card-texture.js';
+import { PALETTE, slabFace, slabMesh } from './models.js';
 import {
   flightOutcome,
   flightPhase,
@@ -46,7 +47,6 @@ const DONE_CARD_SCALE = 0.8;
 const HIT_MARGIN = 0.015;
 
 const deg = Math.PI / 180;
-const FACE_INDEX = 2; // BoxGeometry material order: +x, -x, +y (face), -y, +z, -z
 
 /**
  * Task cards on the tray. Each card works with a direct pinch-grab (drop it
@@ -344,18 +344,24 @@ export class CardSystem extends createSystem({
       card.addComponent(TaskCard, { taskId: task.id, order });
       card.addComponent(RayInteractable);
 
-      const side = new MeshStandardMaterial({ color: 0xd9d2c3, roughness: 0.8 });
+      const side = new MeshStandardMaterial({ color: PALETTE.cardEdge, roughness: 0.8 });
       const face = new MeshStandardMaterial({
         map: createCardTexture(task, order),
         roughness: 0.75,
         emissive: 0xffffff,
         emissiveIntensity: 0,
       });
-      const mesh = new Mesh(
-        new BoxGeometry(CARD_SIZE.width, CARD_SIZE.thickness, CARD_SIZE.height),
-        [side, side, face, side, side, side],
+      const mesh = slabMesh(
+        `card-${order + 1}-body`,
+        {
+          width: CARD_SIZE.width,
+          depth: CARD_SIZE.height,
+          thickness: CARD_SIZE.thickness,
+          radius: 0.006,
+        },
+        face,
+        side,
       );
-      mesh.name = `card-${order + 1}-body`;
       const body = this.world.createTransformEntity(mesh, { parent: card });
       body.addComponent(CardBody, { card });
       body.addComponent(OneHandGrabbable, { rotate: false, translate: true });
@@ -424,6 +430,5 @@ export class CardSystem extends createSystem({
 }
 
 function faceMaterial(body: Entity): MeshStandardMaterial {
-  const mesh = body.object3D as Mesh;
-  return (mesh.material as MeshStandardMaterial[])[FACE_INDEX];
+  return slabFace(body.object3D as Mesh);
 }

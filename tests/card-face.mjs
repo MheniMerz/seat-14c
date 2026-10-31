@@ -3,5 +3,5 @@ import { findAppFrame } from './helpers.mjs';
 export default async function run({ page }) {
   const app = await findAppFrame(page);
   return app.evaluate(() =>
-    String(window.seat14c.world.scene.getObjectByName('card-1-body').material[2].map.id));
+    String(window.seat14c.world.scene.getObjectByName('card-1-body').material[0].map.id));
 }

@@ -1,5 +1,4 @@
 import {
-  BoxGeometry,
   CanvasTexture,
   createSystem,
   CylinderGeometry,
@@ -18,6 +17,7 @@ import {
 import { playSeatbeltChime } from './audio.js';
 import { DoneStack, LandingAction, LandingButton } from './cabin-components.js';
 import { CardSystem, DONE_STACK_TOP } from './cards.js';
+import { PALETTE, roundedSlabGeometry, slabFace, slabMesh } from './models.js';
 import {
   flightClock,
   flightOutcome,
@@ -52,8 +52,6 @@ export class LandingSystem extends createSystem({
   lastRecord: FlightRecord | null = null;
   private tray!: TraySystem;
   private stackTop!: MeshStandardMaterial;
-  private prompt!: TextPanel;
-  private promptEntity!: Entity;
   private summary!: TextPanel;
   private summaryEntity!: Entity;
   private head = new Vector3();
@@ -102,7 +100,7 @@ export class LandingSystem extends createSystem({
   update(delta: number): void {
     const k = Math.min(1, delta * 14);
     for (const button of this.queries.buttons.entities) {
-      const face = ((button.object3D as Mesh).material as MeshStandardMaterial[])[2];
+      const face = slabFace(button.object3D as Mesh);
       const glow = button.hasComponent(Pressed) ? 0.45 : button.hasComponent(Hovered) ? 0.22 : 0;
       face.emissiveIntensity += (glow - face.emissiveIntensity) * k;
     }
@@ -158,12 +156,8 @@ export class LandingSystem extends createSystem({
       setInteractable(button, show, true);
     }
 
-    if (landing) {
-      playSeatbeltChime();
-      this.drawPrompt();
-      this.placeAboveTray(this.promptEntity, 0.03);
-    }
-    this.promptEntity.object3D!.visible = landing;
+    // The landing instruction shows on the seat-back screen.
+    if (landing) playSeatbeltChime();
 
     if (windDown && this.lastRecord != null) {
       this.drawSummary(this.lastRecord, anotherFlight);
@@ -183,19 +177,6 @@ export class LandingSystem extends createSystem({
     object.position.copy(this.head).addScaledVector(this.forward, 0.55);
     object.position.y = this.head.y - dropBelowEyes;
     object.lookAt(this.head);
-  }
-
-  private drawPrompt(): void {
-    this.prompt.draw((ctx, w, h) => {
-      ctx.fillStyle = 'rgba(20, 24, 42, 0.88)';
-      roundRect(ctx, 0, 0, w, h, 36);
-      ctx.fill();
-      ctx.fillStyle = '#eef1fb';
-      ctx.font = '600 40px system-ui, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('Landed. Drop the card on Done, or tap Not yet.', w / 2, h / 2);
-    });
   }
 
   private drawSummary(record: FlightRecord, anotherFlight: boolean): void {
@@ -245,12 +226,12 @@ export class LandingSystem extends createSystem({
     const [x, , z] = TRAY_LAYOUT.done.position;
     group.position.set(x, 0, z);
     this.stackTop = new MeshStandardMaterial({
-      color: 0x4d7a5e,
+      color: PALETTE.done,
       roughness: 0.7,
-      emissive: 0x7dffa8,
+      emissive: PALETTE.doneGlow,
       emissiveIntensity: 0,
     });
-    const base = new Mesh(new BoxGeometry(0.11, DONE_STACK_TOP * 2, 0.075), this.stackTop);
+    const base = new Mesh(roundedSlabGeometry(0.11, 0.075, DONE_STACK_TOP * 2, 0.01), this.stackTop);
     base.name = 'done-base';
     group.add(base);
     const label = createTextPanel('done-label', 0.1, 0.03);
@@ -288,9 +269,6 @@ export class LandingSystem extends createSystem({
     this.summary = createTextPanel('summary-card', 0.36, 0.19);
     this.summaryEntity = this.world.createTransformEntity(this.summary.mesh);
     this.summary.mesh.visible = false;
-    this.prompt = createTextPanel('landing-prompt', 0.5, 0.06);
-    this.promptEntity = this.world.createTransformEntity(this.prompt.mesh);
-    this.prompt.mesh.visible = false;
 
     // Buttons hang under the card, facing the user with it.
     for (const [action, label, x] of [
@@ -322,23 +300,19 @@ function buttonMesh(name: string, label: string): Mesh {
   ctx.fillText(label, canvas.width / 2, canvas.height / 2 + 2);
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
-  const side = new MeshStandardMaterial({ color: 0xa6aed0, roughness: 0.6 });
+  const side = new MeshStandardMaterial({ color: PALETTE.buttonEdge, roughness: 0.6 });
   const face = new MeshStandardMaterial({
     map: texture,
     roughness: 0.6,
     emissive: 0xffffff,
     emissiveIntensity: 0,
   });
-  const mesh = new Mesh(new BoxGeometry(BUTTON.width, BUTTON.height, BUTTON.depth), [
-    side,
-    side,
+  return slabMesh(
+    name,
+    { width: BUTTON.width, depth: BUTTON.depth, thickness: BUTTON.height, radius: 0.01 },
     face,
     side,
-    side,
-    side,
-  ]);
-  mesh.name = name;
-  return mesh;
+  );
 }
 
 /** Hidden targets must not catch gaze or pokes, so drop the components. */

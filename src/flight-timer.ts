@@ -16,6 +16,7 @@ import {
   VisibilityState,
 } from '@iwsdk/core';
 import { TakeoffButton } from './cabin-components.js';
+import { PALETTE, slabMesh } from './models.js';
 import {
   flightClock,
   flightPhase,
@@ -140,18 +141,19 @@ export class FlightTimerSystem extends createSystem({
     const texture = new CanvasTexture(canvas);
     texture.colorSpace = SRGBColorSpace;
 
-    const side = new MeshStandardMaterial({ color: 0xc98a2b, roughness: 0.6 });
+    const side = new MeshStandardMaterial({ color: PALETTE.amberDeep, roughness: 0.6 });
     this.buttonFace = new MeshStandardMaterial({
       map: texture,
       roughness: 0.6,
       emissive: 0xffffff,
       emissiveIntensity: 0,
     });
-    const mesh = new Mesh(
-      new BoxGeometry(BUTTON.width, BUTTON.height, BUTTON.depth),
-      [side, side, this.buttonFace, side, side, side],
+    const mesh = slabMesh(
+      'takeoff-button',
+      { width: BUTTON.width, depth: BUTTON.depth, thickness: BUTTON.height, radius: 0.01 },
+      this.buttonFace,
+      side,
     );
-    mesh.name = 'takeoff-button';
     mesh.position.set(
       0,
       TRAY_LAYOUT.surfaceY + BUTTON.height / 2,

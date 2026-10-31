@@ -20,6 +20,7 @@ import {
 import { playSlot, playTick } from './audio.js';
 import { TutorialBody, TutorialKind, TutorialTarget } from './cabin-components.js';
 import { flightPhase, FlightPhase, flightPlan, setFlightPhase } from './flight-state.js';
+import { slabMesh } from './models.js';
 import { loadProgress, saveProgress } from './storage.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
 import { TRAY_DEFAULTS, TRAY_LAYOUT, TraySystem } from './tray.js';
@@ -71,7 +72,6 @@ export class BoardingSystem extends createSystem({
   /** Where each part is heading once let go, in tray space. */
   private goal = new Map<Kind, { position: Vector3; quaternion: Quaternion; scale: number }>();
   private matrix = new Matrix4();
-  private scale = new Vector3();
   private vec = new Vector3();
   private stepTime = 0;
 
@@ -305,15 +305,12 @@ export class BoardingSystem extends createSystem({
         emissiveIntensity: 0,
       });
       const side = new MeshStandardMaterial({ color: 0xe8e2d4, roughness: 0.8 });
-      const mesh = new Mesh(new BoxGeometry(width, PASS.thickness, PASS.height), [
-        side,
-        side,
+      const mesh = slabMesh(
+        `boarding-${kind}-body`,
+        { width, depth: PASS.height, thickness: PASS.thickness, radius: 0.004 },
         face,
         side,
-        side,
-        side,
-      ]);
-      mesh.name = `boarding-${kind}-body`;
+      );
       const body = this.world.createTransformEntity(mesh, { parent: target });
       body.addComponent(TutorialBody, { target });
       body.addComponent(OneHandGrabbable, { rotate: false, translate: true });

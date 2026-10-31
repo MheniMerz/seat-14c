@@ -1,5 +1,4 @@
 import {
-  BoxGeometry,
   CanvasTexture,
   createSystem,
   Entity,
@@ -15,6 +14,7 @@ import {
 } from '@iwsdk/core';
 import { BoardingSystem } from './boarding.js';
 import { TrayHeightButton } from './cabin-components.js';
+import { slabFace, slabMesh } from './models.js';
 import { flightPhase, FlightPhase, setFlightPhase } from './flight-state.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
 import { TRAY_DEFAULTS, TraySystem } from './tray.js';
@@ -102,9 +102,9 @@ export class CalibrationSystem extends createSystem({
 
   update(delta: number): void {
     for (const button of this.queries.heightButtons.entities) {
-      const face = (button.object3D as Mesh).material as MeshStandardMaterial[];
+      const face = slabFace(button.object3D as Mesh);
       const glow = button.hasComponent(Pressed) ? 0.45 : button.hasComponent(Hovered) ? 0.22 : 0;
-      face[2].emissiveIntensity += (glow - face[2].emissiveIntensity) * Math.min(1, delta * 14);
+      face.emissiveIntensity += (glow - face.emissiveIntensity) * Math.min(1, delta * 14);
     }
 
     if (flightPhase.peek() !== FlightPhase.Calibrating) return;
@@ -239,15 +239,12 @@ export class CalibrationSystem extends createSystem({
         emissive: 0xffffff,
         emissiveIntensity: 0,
       });
-      const mesh = new Mesh(new BoxGeometry(0.04, 0.02, 0.06), [
-        side,
-        side,
+      const mesh = slabMesh(
+        `tray-${label.toLowerCase()}`,
+        { width: 0.04, depth: 0.06, thickness: 0.02, radius: 0.008 },
         face,
         side,
-        side,
-        side,
-      ]);
-      mesh.name = `tray-${label.toLowerCase()}`;
+      );
       mesh.position.set(
         direction * (TRAY_DEFAULTS.width / 2 + 0.024),
         0,

@@ -1,6 +1,6 @@
 import {
-  BoxGeometry,
   createSystem,
+  DirectionalLight,
   Entity,
   Group,
   Mesh,
@@ -9,6 +9,7 @@ import {
   VisibilityState,
 } from '@iwsdk/core';
 import { flightPhase, FlightPhase } from './flight-state.js';
+import { PALETTE, roundedSlabGeometry } from './models.js';
 
 /**
  * Placement of the tray relative to the seated head, in metres and degrees.
@@ -76,6 +77,13 @@ export class TraySystem extends createSystem({}) {
     this.tray = this.world.createTransformEntity(buildTray());
     this.tray.object3D!.name = 'tray';
     this.tray.object3D!.visible = false;
+
+    // A soft overhead reading light so the moulded shapes read in 3D.
+    const light = new DirectionalLight(0xfff1dd, 0.9);
+    light.name = 'reading-light';
+    light.position.set(0.15, 0.8, 0.45);
+    light.target = this.tray.object3D!;
+    this.tray.object3D!.add(light);
 
     this.cleanupFuncs.push(
       this.world.visibilityState.subscribe((state) => {
@@ -163,19 +171,27 @@ function buildTray(): Group {
   const { width, depth, thickness } = TRAY_DEFAULTS;
   const group = new Group();
 
-  const trim = new MeshStandardMaterial({ color: 0x3d4656, roughness: 0.5 });
+  const trim = new MeshStandardMaterial({ color: PALETTE.trim, roughness: 0.5 });
 
+  // Moulded tray: a light top over a slightly larger, darker rim.
   const top = new Mesh(
-    new BoxGeometry(width, thickness, depth),
-    new MeshStandardMaterial({ color: 0x8a94a6, roughness: 0.7 }),
+    roundedSlabGeometry(width, depth, thickness, 0.03),
+    new MeshStandardMaterial({ color: PALETTE.trayTop, roughness: 0.75 }),
   );
   top.name = 'tray-top';
   group.add(top);
+  const rim = new Mesh(
+    roundedSlabGeometry(width + 0.01, depth + 0.01, thickness * 0.7, 0.035),
+    new MeshStandardMaterial({ color: PALETTE.trayRim, roughness: 0.6 }),
+  );
+  rim.name = 'tray-rim';
+  rim.position.y = -thickness * 0.2;
+  group.add(rim);
 
   // A raised lip on the far edge, like a seat-back tray latch rail.
-  const lip = new Mesh(new BoxGeometry(width, thickness * 1.5, 0.012), trim);
+  const lip = new Mesh(roundedSlabGeometry(width - 0.02, 0.012, thickness * 1.5, 0.005), trim);
   lip.name = 'tray-lip';
-  lip.position.set(0, thickness, -depth / 2 + 0.006);
+  lip.position.set(0, thickness, -depth / 2 + 0.008);
   group.add(lip);
 
   // Stand that holds the active card up toward eye line.
@@ -185,27 +201,36 @@ function buildTray(): Group {
   stand.position.set(nx, ny, nz);
   stand.rotation.x = TRAY_LAYOUT.now.tiltDeg * deg;
   const plate = new Mesh(
-    new BoxGeometry(0.14, 0.006, 0.095),
-    new MeshStandardMaterial({ color: 0xffb547, roughness: 0.6 }),
+    roundedSlabGeometry(0.14, 0.095, 0.006, 0.012),
+    new MeshStandardMaterial({ color: PALETTE.amber, roughness: 0.6 }),
   );
   plate.name = 'now-plate';
   plate.position.y = -0.006;
   stand.add(plate);
   group.add(stand);
-  const post = new Mesh(new BoxGeometry(0.03, ny, 0.012), trim);
+  const post = new Mesh(roundedSlabGeometry(0.03, 0.012, ny, 0.005), trim);
   post.name = 'now-post';
   post.position.set(nx, ny / 2, nz - 0.02);
   group.add(post);
 
-  // Seat pocket hanging off the far edge, cards peek out of its top.
+  // Fabric seat pocket hanging off the far edge, with an elastic band.
   const [px, py, pz] = TRAY_LAYOUT.pocket.position;
   const pocket = new Mesh(
-    new BoxGeometry(width * 0.95, 0.07, 0.02),
-    new MeshStandardMaterial({ color: 0x2a3142, roughness: 0.95 }),
+    roundedSlabGeometry(width * 0.95, 0.07, 0.02, 0.012),
+    new MeshStandardMaterial({ color: PALETTE.fabric, roughness: 0.95 }),
   );
   pocket.name = 'seat-pocket';
+  // Stand the slab up: its depth becomes height.
+  pocket.rotation.x = Math.PI / 2;
   pocket.position.set(px, py, pz);
   group.add(pocket);
+  const band = new Mesh(
+    roundedSlabGeometry(width * 0.95, 0.024, 0.008, 0.004),
+    new MeshStandardMaterial({ color: PALETTE.fabricBand, roughness: 0.8 }),
+  );
+  band.name = 'seat-pocket-band';
+  band.position.set(px, py + 0.035, pz + 0.006);
+  group.add(band);
 
   return group;
 }
