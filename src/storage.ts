@@ -20,6 +20,8 @@ export type Progress = {
   lastFlightDate: string; // ISO date
   postcards: string[];
   themes: string[];
+  /** The boarding-pass tutorial has been completed once. */
+  boardingDone: boolean;
   settings: {
     gazeOnly: boolean;
     oneHand: boolean;
@@ -43,6 +45,7 @@ export function defaultProgress(): Progress {
     lastFlightDate: '',
     postcards: [],
     themes: [],
+    boardingDone: false,
     settings: {
       gazeOnly: false,
       oneHand: false,

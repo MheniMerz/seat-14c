@@ -35,6 +35,8 @@ const deg = Math.PI / 180;
  */
 const STOP_ANGLES = [60 * deg, 20 * deg, -20 * deg, -60 * deg];
 const ANGLE_LIMIT = 80 * deg;
+/** The dial can be set in preflight and during the boarding tutorial. */
+const SETTABLE_PHASES: FlightPhase[] = [FlightPhase.Preflight, FlightPhase.Boarding];
 const EASE_RATE = 16;
 
 const PLATE_SIZE = 0.12;
@@ -76,7 +78,7 @@ export class DialSystem extends createSystem({
       }),
       flightPhase.subscribe(() => this.redraw()),
       this.queries.heldKnobs.subscribe('disqualify', (knob) => {
-        if (flightPhase.peek() !== FlightPhase.Preflight) return;
+        if (!SETTABLE_PHASES.includes(flightPhase.peek())) return;
         this.previewIndex = -1;
         const index = nearestStop(knob.object3D!.rotation.y);
         // Re-snap even if the length did not change.
@@ -139,7 +141,7 @@ export class DialSystem extends createSystem({
 
   /** Look + pinch: advance to the next length, wrapping after 45. */
   private step(): void {
-    if (flightPhase.peek() !== FlightPhase.Preflight) return;
+    if (!SETTABLE_PHASES.includes(flightPhase.peek())) return;
     const current = FLIGHT_LENGTHS.indexOf(flightPlan.minutes.peek() as never);
     flightPlan.minutes.value = FLIGHT_LENGTHS[(current + 1) % FLIGHT_LENGTHS.length];
     playDetent();

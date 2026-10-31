@@ -7,6 +7,7 @@
 
 import { World } from '@iwsdk/core';
 import projectOptions from 'virtual:iwsdk-project';
+import { BoardingSystem } from './boarding.js';
 import { CalibrationSystem } from './calibration.js';
 import { CardSystem } from './cards.js';
 import { mountCheckIn } from './checkin.js';
@@ -33,6 +34,7 @@ World.create(
   world.registerSystem(CardSystem);
   world.registerSystem(DialSystem);
   world.registerSystem(FlightTimerSystem);
+  world.registerSystem(BoardingSystem);
   world.registerSystem(LandingSystem);
   world.registerSystem(SeatbackSystem);
   world.registerSystem(StepsSystem);

@@ -13,6 +13,7 @@ import {
   Vector3,
   VisibilityState,
 } from '@iwsdk/core';
+import { BoardingSystem } from './boarding.js';
 import { TrayHeightButton } from './cabin-components.js';
 import { flightPhase, FlightPhase, setFlightPhase } from './flight-state.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
@@ -147,8 +148,9 @@ export class CalibrationSystem extends createSystem({
   private finish(result: CalibrationResult): void {
     this.result = result;
     this.hintEntity.object3D!.visible = false;
-    // The boarding-pass tutorial (first launch) will slot in here.
-    setFlightPhase(FlightPhase.Preflight);
+    setFlightPhase(
+      BoardingSystem.isFirstLaunch() ? FlightPhase.Boarding : FlightPhase.Preflight,
+    );
   }
 
   /** Float the hint just above the tray, facing the user. */

@@ -69,3 +69,18 @@ export const LandingButton = createComponent('LandingButton', {
 export const StepRow = createComponent('StepRow', {
   index: { type: Types.Int8, default: 0 },
 });
+
+export const TutorialKind = {
+  Stub: 'stub',
+  Pass: 'pass',
+} as const;
+
+/** A boarding-pass tutorial part's ray/gaze hit area (look + pinch). */
+export const TutorialTarget = createComponent('TutorialTarget', {
+  kind: { type: Types.Enum, default: TutorialKind.Stub, enum: TutorialKind },
+});
+
+/** The grabbable, visible child of a {@link TutorialTarget}. */
+export const TutorialBody = createComponent('TutorialBody', {
+  target: { type: Types.Entity, default: null },
+});

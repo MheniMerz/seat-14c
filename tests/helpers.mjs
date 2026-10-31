@@ -20,8 +20,13 @@ export async function boardWithSampleTasks(page, frame, progress) {
   await frame.evaluate(
     ([tasks, progress]) => {
       localStorage.setItem('seat14c.tasks.v1', JSON.stringify(tasks));
-      if (progress) localStorage.setItem('seat14c.progress.v1', JSON.stringify(progress));
-      else localStorage.removeItem('seat14c.progress.v1');
+      // Default: a user who has done the boarding tutorial but flown nothing.
+      const seeded = progress ?? {
+        version: 1, totalMiles: 0, streakDays: 0, lastFlightDate: '',
+        postcards: [], themes: [], boardingDone: true, settings: {},
+      };
+      if (progress === 'first-launch') localStorage.removeItem('seat14c.progress.v1');
+      else localStorage.setItem('seat14c.progress.v1', JSON.stringify(seeded));
     },
     [SAMPLE_TASKS, progress ?? null],
   );

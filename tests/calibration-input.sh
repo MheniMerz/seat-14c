@@ -16,29 +16,28 @@ check() { if [[ "$2" == $3 ]]; then echo "PASS $1 ($2)"; else echo "FAIL $1 (got
 
 # The emulator's default hands sit only 10 cm below the eyes, which never
 # counts as resting, so each case boards first and then places the hands.
+# Hands go in place straight after boarding: calibration only waits 5 s.
 board() {
   cli browser run tests/board-only.mjs >/dev/null
+  xr set-transform "{\"device\":\"hand-left\",\"position\":{\"x\":-0.2,\"y\":$1,\"z\":-0.35}}"
+  xr set-transform "{\"device\":\"hand-right\",\"position\":{\"x\":0.2,\"y\":$1,\"z\":-0.35}}"
   xr set-input-mode '{"mode":"hand"}'
   xr set-connected '{"device":"gaze","connected":true}'
   xr look-at '{"device":"gaze","target":{"x":0,"y":2.5,"z":-1}}'
 }
 
 # 1. Hands raised near eye height never count: times out to the default.
-board
-xr set-transform '{"device":"hand-left","position":{"x":-0.2,"y":1.52,"z":-0.35}}'
-xr set-transform '{"device":"hand-right","position":{"x":0.2,"y":1.52,"z":-0.35}}'
+board 1.52
 sleep 5
 check "times out to default height" "$(state)" "preflight timeout 0.22"
 
 # 2. Hands resting low and still: tray moves just above them.
-board
-xr set-transform '{"device":"hand-left","position":{"x":-0.2,"y":1.3,"z":-0.35}}'
-xr set-transform '{"device":"hand-right","position":{"x":0.2,"y":1.3,"z":-0.35}}'
-sleep 2
+board 1.3
+sleep 1
 check "calibrates from resting hands" "$(state)" "preflight hands 0.2*"
 
 # 3. Hands that never settle do not calibrate; the timeout wins.
-board
+board 1.52
 xr set-transform '{"device":"hand-left","position":{"x":-0.2,"y":1.3,"z":-0.35}}'
 xr animate-to '{"device":"hand-right","position":{"x":0.2,"y":1.1,"z":-0.35},"duration":7}' &
 sleep 6

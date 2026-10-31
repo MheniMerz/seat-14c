@@ -57,7 +57,9 @@ export class SeatbackSystem extends createSystem({}) {
           this.baseMiles = loadProgress().totalMiles;
         }
         this.seatBack.object3D!.visible =
-          phase !== FlightPhase.CheckIn && phase !== FlightPhase.Calibrating;
+          phase !== FlightPhase.CheckIn &&
+          phase !== FlightPhase.Calibrating &&
+          phase !== FlightPhase.Boarding;
       }),
       effect(() => {
         // Redraw on any change to what the map shows.

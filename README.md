@@ -29,6 +29,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/input-tuning.ts`   | Shortens poke hover to 6 cm so resting hands don't switch gaze off        |
 | `src/tray.ts`           | Tray table, its layout (Now stand, pocket, dial, Done), height            |
 | `src/calibration.ts`    | Hands-at-rest calibration, 5 s timeout, Raise / Lower buttons             |
+| `src/boarding.ts`       | First-launch boarding pass: tear stub, pocket the pass, twist the dial    |
 | `src/cards.ts`          | Task cards: grab or look + pinch onto the Now stand; pocket; Done         |
 | `src/dial.ts`           | Flight dial: pinch and twist, snaps to 5/10/25/45; look + pinch steps     |
 | `src/flight-timer.ts`   | Take off button, focus clock, progress line under the active card         |
@@ -76,6 +77,7 @@ npx @iwsdk/cli browser run tests/route-unit.mjs      # miles, streak, postcards
 ./tests/cards-input.sh        # gaze + pinch and pinch-grab on cards
 ./tests/dial-input.sh         # pinch-and-twist, gaze + pinch dial / Take off
 ./tests/calibration-input.sh  # timeout, resting hands, Raise / Lower, poke
+./tests/boarding-input.sh     # tutorial by hand gestures, then by look + pinch
 ./tests/steps-input.sh        # steps reveal, tick by gaze and poke; cabin dims
 ./tests/gaze-off.sh           # every look + pinch action by hand ray, gaze off
 ./tests/flight-e2e.sh         # one full flight with real emulated input

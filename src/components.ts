@@ -16,6 +16,8 @@ import {
   TakeoffButton,
   TaskCard,
   TrayHeightButton,
+  TutorialBody,
+  TutorialTarget,
 } from './cabin-components.js';
 
 export default defineComponents([
@@ -28,4 +30,6 @@ export default defineComponents([
   DoneStack,
   LandingButton,
   StepRow,
+  TutorialTarget,
+  TutorialBody,
 ]);
