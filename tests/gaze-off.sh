@@ -38,10 +38,10 @@ check "hand ray presses Raise" "$(field "$(run state.mjs)" "tray['drop']")" "0.1
 POS=$(run positions.mjs)
 ray_pinch takeoff-button
 check "hand ray presses Take off" "$(phase)" "cruise"
-check "click, slot and detent sounds" "$(run sounds.mjs)" "*click*slot*detent*click*click*"
+check "click, slot, detent and engine sounds" "$(run sounds.mjs)" "*click*slot*detent*click*click*takeoff*"
 run fast-clock.mjs >/dev/null
 sleep 3.5
-check "landing plays the seat-belt chime" "$(run sounds.mjs)" "*seatbeltChime*"
+check "landing: engines down, seat-belt chime" "$(run sounds.mjs)" "@(*engines-down*seatbeltChime*|*seatbeltChime*engines-down*)"
 POS=$(run positions.mjs)
 ray_pinch done-stack
 check "hand ray on Done stack finishes" "$(field "$(run state.mjs)" "f\"{phase} {cards[1]['place']}\"")" "winddown done"
@@ -60,5 +60,9 @@ ray_pinch landing-later
 check "hand ray presses Not yet" "$(field "$(run state.mjs)" "f\"{phase} {cards[0]['place']}\"")" "winddown pocket"
 POS=$(run positions.mjs)
 ray_pinch summary-finish
-sleep 1
+# Leaving XR can take a moment; wait up to 5 s for the check-in page.
+for _ in 1 2 3 4 5; do
+  [ "$(field "$(run checkin-state.mjs)" "phase")" = checkin ] && break
+  sleep 1
+done
 check "hand ray presses Finish" "$(field "$(run checkin-state.mjs)" "f\"{phase} {checkinVisible}\"")" "checkin True"

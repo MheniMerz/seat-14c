@@ -28,7 +28,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/flight-state.ts`   | Flight phase signal, flight plan and clock, `FlightSystem`                |
 | `src/input-tuning.ts`   | Shortens poke hover to 6 cm so resting hands don't switch gaze off        |
 | `src/tray.ts`           | Tray table, its layout (Now stand, pocket, dial, Done), height            |
-| `src/calibration.ts`    | Hands-at-rest calibration, 5 s timeout, Raise / Lower buttons             |
+| `src/calibration.ts`    | Hands-at-rest calibration, 5 s timeout, Raise / Lower on the seat back    |
 | `src/boarding.ts`       | First-launch boarding pass: tear stub, pocket the pass, twist the dial    |
 | `src/cards.ts`          | Task cards: grab or look + pinch onto the Now stand; pocket; Done         |
 | `src/dial.ts`           | Flight dial: pinch and twist, snaps to 5/10/25/45; look + pinch steps     |
@@ -36,6 +36,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/landing.ts`        | Chime, Done stack, Not yet, saving the flight, summary card               |
 | `src/audio.ts`          | Synthesized cabin sounds (WebAudio): clicks, detents, seat-belt chime     |
 | `src/feedback.ts`       | Click on every press, pick/drop sounds on every grab                      |
+| `src/soundscape.ts`     | Engines spool up at takeoff, hum in cruise, spool down on landing         |
 | `src/steps.ts`          | Active task's steps beside the Now card; look reveals, pinch/poke ticks   |
 | `src/focus.ts`          | Cruise focus: dims the passthrough room, fades all but the active card    |
 | `src/route.ts`          | Fictional destinations by cumulative miles; postcards when reached        |
@@ -52,6 +53,11 @@ device). Systems are registered in `src/index.ts`.
   part.
 - On VR Glasses, gaze replaces hand rays. Gaze turns off while a hand hovers
   anything, which is why the poke hover radius is cut from 20 cm to 6 cm.
+- `tests/fov-check.sh` holds every screen to the VR Glasses' 70° x 66° view:
+  the active card, its progress line, the dial's time to go and floating
+  panels must be visible looking straight ahead; the rest within a 15° glance
+  down. Raise / Lower moved to the seat back because the tray's sides were
+  outside that width and the dial's hit area stole gaze from them.
 - Every action works by direct hands and by look + pinch. The dial steps
   through lengths on look + pinch rather than using four chips, because chips
   around a 7 cm dial would sit closer than gaze can separate (about 9 cm).
@@ -81,6 +87,8 @@ npx @iwsdk/cli browser run tests/route-unit.mjs      # miles, streak, postcards
 ./tests/boarding-input.sh     # tutorial by hand gestures, then by look + pinch
 ./tests/steps-input.sh        # steps reveal, tick by gaze and poke; cabin dims
 ./tests/gaze-off.sh           # every look + pinch action by hand ray, gaze off
+./tests/gaze-targets.sh       # gaze on each target hovers that target only
+./tests/fov-check.sh          # every screen against the 70° x 66° glasses view
 ./tests/flight-e2e.sh         # one full flight with real emulated input
 ./tests/capture-sheet.sh      # writes docs/greybox-flight.png
 ```

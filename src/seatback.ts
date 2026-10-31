@@ -18,7 +18,11 @@ const deg = Math.PI / 180;
 
 /** Seat-back screen size (16:9) and where it stands in tray space. */
 const SCREEN = { width: 0.24, height: 0.135, pixelsPerMetre: 4000 };
-const SEAT_BACK = { width: 0.34, height: 0.3, z: -0.19, bottomY: -0.06 };
+export const SEAT_BACK = { width: 0.34, height: 0.3, z: -0.19, bottomY: -0.06 };
+/** Height of the screen's centre in the upright seat-back frame. */
+export const SCREEN_CENTER_Y = SEAT_BACK.bottomY + SEAT_BACK.height - SCREEN.height / 2 - 0.025;
+/** Seat-back controls sit this far either side of the screen's centre. */
+export const SEAT_BACK_BUTTON_X = SCREEN.width / 2 + 0.035;
 /** Seconds between map redraws while cruising. */
 const CRUISE_REDRAW = 0.5;
 
@@ -262,7 +266,7 @@ export class SeatbackSystem extends createSystem({}) {
     );
     bezel.name = 'seat-back-bezel';
     bezel.rotation.x = Math.PI / 2;
-    bezel.position.set(0, SEAT_BACK.bottomY + SEAT_BACK.height - SCREEN.height / 2 - 0.025, 0);
+    bezel.position.set(0, SCREEN_CENTER_Y, 0);
     group.add(bezel);
     group.add(shell);
 
@@ -272,11 +276,7 @@ export class SeatbackSystem extends createSystem({}) {
       SCREEN.height,
       SCREEN.pixelsPerMetre,
     );
-    this.screen.mesh.position.set(
-      0,
-      SEAT_BACK.bottomY + SEAT_BACK.height - SCREEN.height / 2 - 0.025,
-      0.0025,
-    );
+    this.screen.mesh.position.set(0, SCREEN_CENTER_Y, 0.0025);
     group.add(this.screen.mesh);
 
     this.seatBack = this.world.createTransformEntity(group, { parent: tray });

@@ -130,3 +130,101 @@ export function playSeatbeltChime(): void {
   tone({ frequency: 784, duration: 1.8, volume: 0.22, attack: 0.01, delay: 0.55 });
   tone({ frequency: 1568, duration: 0.7, volume: 0.04, attack: 0.01, delay: 0.55 });
 }
+
+let noise: AudioBuffer | null = null;
+
+/** Two seconds of brown noise, looped for engine sounds. */
+function brownNoise(ctx: AudioContext): AudioBuffer {
+  if (noise != null) return noise;
+  noise = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+  const data = noise.getChannelData(0);
+  let last = 0;
+  for (let i = 0; i < data.length; i++) {
+    last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02;
+    data[i] = last * 3.5;
+  }
+  return noise;
+}
+
+type Engine = {
+  source: AudioBufferSourceNode;
+  filter: BiquadFilterNode;
+  gain: GainNode;
+  rumble: OscillatorNode;
+};
+
+let engine: Engine | null = null;
+
+/** Cruise hum level; the takeoff swell peaks above it. */
+const HUM = 0.32;
+
+/**
+ * Takeoff: the engines spool up over four seconds (a rising filtered-noise
+ * sweep), then settle into a low cabin hum that loops until landing.
+ */
+export function startEngines(): void {
+  log('takeoff');
+  const audio = audioOut();
+  if (audio == null || engine != null) return;
+  const { ctx, out } = audio;
+  const now = ctx.currentTime;
+
+  const source = ctx.createBufferSource();
+  source.buffer = brownNoise(ctx);
+  source.loop = true;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.Q.value = 0.8;
+  filter.frequency.setValueAtTime(120, now);
+  filter.frequency.exponentialRampToValueAtTime(1400, now + 3.5);
+  filter.frequency.exponentialRampToValueAtTime(380, now + 7);
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(HUM * 1.8, now + 3.5);
+  gain.gain.exponentialRampToValueAtTime(HUM, now + 7);
+
+  // A low fundamental under the noise gives the hum its body.
+  const rumble = ctx.createOscillator();
+  rumble.type = 'sine';
+  rumble.frequency.setValueAtTime(48, now);
+  rumble.frequency.linearRampToValueAtTime(62, now + 3.5);
+  const rumbleGain = ctx.createGain();
+  rumbleGain.gain.value = 0.25;
+
+  source.connect(filter).connect(gain).connect(out);
+  rumble.connect(rumbleGain).connect(gain);
+  source.start(now);
+  rumble.start(now);
+  engine = { source, filter, gain, rumble };
+}
+
+/** Landing: the hum spools down over three seconds and stops. */
+export function stopEngines(): void {
+  if (engine == null) return;
+  log('engines-down');
+  const audio = audioOut();
+  const current = engine;
+  engine = null;
+  if (audio == null) {
+    current.source.stop();
+    current.rumble.stop();
+    return;
+  }
+  const now = audio.ctx.currentTime;
+  current.filter.frequency.cancelScheduledValues(now);
+  current.filter.frequency.setValueAtTime(current.filter.frequency.value, now);
+  current.filter.frequency.exponentialRampToValueAtTime(90, now + 3);
+  current.gain.gain.cancelScheduledValues(now);
+  current.gain.gain.setValueAtTime(current.gain.gain.value, now);
+  current.gain.gain.exponentialRampToValueAtTime(0.0001, now + 3);
+  current.source.stop(now + 3.1);
+  current.rumble.stop(now + 3.1);
+}
+
+/** Quieter while the session is blurred (a system menu is open). */
+export function duckEngines(ducked: boolean): void {
+  const audio = audioOut();
+  if (engine == null || audio == null) return;
+  engine.gain.gain.cancelScheduledValues(audio.ctx.currentTime);
+  engine.gain.gain.setTargetAtTime(ducked ? HUM * 0.25 : HUM, audio.ctx.currentTime, 0.3);
+}

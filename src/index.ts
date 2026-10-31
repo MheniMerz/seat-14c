@@ -19,6 +19,7 @@ import { FocusSystem } from './focus.js';
 import { InputTuningSystem } from './input-tuning.js';
 import { LandingSystem } from './landing.js';
 import { SeatbackSystem } from './seatback.js';
+import { SoundscapeSystem } from './soundscape.js';
 import { StepsSystem } from './steps.js';
 import { TraySystem } from './tray.js';
 
@@ -40,5 +41,6 @@ World.create(
   world.registerSystem(StepsSystem);
   world.registerSystem(FocusSystem);
   world.registerSystem(FeedbackSystem);
+  world.registerSystem(SoundscapeSystem);
   mountCheckIn(world);
 });

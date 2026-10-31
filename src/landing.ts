@@ -1,7 +1,7 @@
 import {
+  BoxGeometry,
   CanvasTexture,
   createSystem,
-  CylinderGeometry,
   Entity,
   Group,
   Hovered,
@@ -245,12 +245,13 @@ export class LandingSystem extends createSystem({
     label.mesh.rotation.x = -Math.PI / 2;
     label.mesh.position.set(0, DONE_STACK_TOP + 0.0005, 0.05);
     group.add(label.mesh);
+    // Just past the stack's edges, clear of the Lower button beside it.
     const hit = new Mesh(
-      new CylinderGeometry(0.07, 0.07, 0.04, 24),
+      new BoxGeometry(0.115, 0.03, 0.08),
       new MeshBasicMaterial({ colorWrite: false, depthWrite: false }),
     );
     hit.name = 'done-hit';
-    hit.position.y = 0.02;
+    hit.position.y = 0.015;
     hit.pointerEventsType = { deny: 'grab' };
     group.add(hit);
     const stack = this.world.createTransformEntity(group, { parent: this.tray.tray });

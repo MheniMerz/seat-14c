@@ -2,6 +2,7 @@ import {
   CanvasTexture,
   createSystem,
   Entity,
+  Group,
   Hovered,
   Mesh,
   MeshStandardMaterial,
@@ -15,6 +16,7 @@ import {
 import { BoardingSystem } from './boarding.js';
 import { TrayHeightButton } from './cabin-components.js';
 import { slabFace, slabMesh } from './models.js';
+import { SCREEN_CENTER_Y, SEAT_BACK, SEAT_BACK_BUTTON_X } from './seatback.js';
 import { flightPhase, FlightPhase, setFlightPhase } from './flight-state.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
 import { TRAY_DEFAULTS, TraySystem } from './tray.js';
@@ -35,6 +37,7 @@ const TRAY_ABOVE_HANDS = 0.08;
 const HEIGHT_STEP = 0.03;
 
 const HANDS = ['left', 'right'] as const;
+const deg = Math.PI / 180;
 
 export type CalibrationResult = 'pending' | 'hands' | 'timeout';
 
@@ -209,9 +212,18 @@ export class CalibrationSystem extends createSystem({
     this.hint.mesh.visible = false;
   }
 
-  /** Lower on the tray's left edge, Raise on its right; far apart for gaze. */
+  /**
+   * Lower and Raise on the seat back, either side of the screen, like real
+   * seat-back controls: at eye level, inside the glasses' view, and well
+   * clear of every tray target for gaze.
+   */
   private buildHeightButtons(): void {
-    const parent = this.tray.tray;
+    // Same frame as the seat back: upright, behind the tray.
+    const frame = new Group();
+    frame.name = 'seat-back-controls';
+    frame.position.set(0, 0, SEAT_BACK.z);
+    frame.rotation.x = -TRAY_DEFAULTS.tiltDeg * deg;
+    const parent = this.world.createTransformEntity(frame, { parent: this.tray.tray });
     for (const [direction, label] of [
       [-1, 'Lower'],
       [1, 'Raise'],
@@ -245,11 +257,9 @@ export class CalibrationSystem extends createSystem({
         face,
         side,
       );
-      mesh.position.set(
-        direction * (TRAY_DEFAULTS.width / 2 + 0.024),
-        0,
-        0.02,
-      );
+      // Stand the slab up so its face (+Y) points at the user (+Z).
+      mesh.rotation.x = Math.PI / 2;
+      mesh.position.set(direction * SEAT_BACK_BUTTON_X, SCREEN_CENTER_Y, 0.01);
       const button = this.world.createTransformEntity(mesh, { parent });
       button.addComponent(TrayHeightButton, { direction });
     }

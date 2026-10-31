@@ -211,13 +211,14 @@ export class DialSystem extends createSystem({
     plate.position.y = 0.001;
     group.add(plate);
 
-    // A larger invisible target so gaze can land on the dial easily.
+    // A slightly larger invisible target so gaze lands on the dial easily;
+    // kept tight so it doesn't steal gaze from the Raise button beside it.
     const hit = new Mesh(
-      new CylinderGeometry(0.05, 0.05, 0.04, 24),
+      new CylinderGeometry(0.042, 0.042, 0.03, 24),
       new MeshBasicMaterial({ colorWrite: false, depthWrite: false }),
     );
     hit.name = 'dial-hit';
-    hit.position.y = 0.02;
+    hit.position.y = 0.015;
     hit.pointerEventsType = { deny: 'grab' };
     group.add(hit);
 
