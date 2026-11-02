@@ -56,6 +56,7 @@ const SCALED_PANELS = [
   'steps-panel',
   'wind-down',
   'summary-card',
+  'wrist-menu',
 ];
 
 /** Look-only mode: hold your gaze on a target this long (s) to select it. */

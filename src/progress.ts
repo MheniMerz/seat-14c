@@ -8,6 +8,9 @@ import {
 } from './storage.js';
 import { Destination, destinationsBetween } from './route.js';
 
+/** A 3-day streak earns the first seat upgrade: the Night flight cabin. */
+export const NIGHT_UNLOCK_STREAK = 3;
+
 export type FlightOutcome = 'done' | 'later';
 
 export type FlightRecord = {
@@ -16,6 +19,8 @@ export type FlightRecord = {
   miles: number;
   /** Destinations reached on this flight; each stamps a postcard. */
   reached: Destination[];
+  /** Cabin themes this flight unlocked. */
+  unlocked: string[];
   progress: Progress;
 };
 
@@ -66,6 +71,11 @@ export function recordFlight(
   }
   progress.streakDays = nextStreak(progress, today);
   progress.lastFlightDate = today;
+  const unlocked: string[] = [];
+  if (progress.streakDays >= NIGHT_UNLOCK_STREAK && !progress.themes.includes('night')) {
+    progress.themes.push('night');
+    unlocked.push('night');
+  }
   saveProgress(progress);
 
   if (taskId != null && outcome === 'done') {
@@ -77,5 +87,5 @@ export function recordFlight(
     }
   }
 
-  return { outcome, focusMinutes, miles, reached, progress };
+  return { outcome, focusMinutes, miles, reached, unlocked, progress };
 }

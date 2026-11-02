@@ -1,3 +1,4 @@
+import { THEME_LOOK } from './cabin-theme.js';
 import { INK } from './accessibility.js';
 import {
   createSystem,
@@ -28,7 +29,9 @@ export const SEAT_BACK_BUTTON_X = SCREEN.width / 2 + 0.035;
 const CRUISE_REDRAW = 0.5;
 
 const COLORS = {
-  sky: '#101a33',
+  get sky() {
+    return THEME_LOOK.sky;
+  },
   land: '#1b2a4a',
   grid: 'rgba(166, 174, 208, 0.12)',
   future: 'rgba(166, 174, 208, 0.55)',

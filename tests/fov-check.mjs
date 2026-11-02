@@ -19,7 +19,7 @@ const SCREENS = {
     'thought-jar'],
   landing: ['!NOW', 'done-stack', 'landing-later', '!seat-back-screen'],
   winddown: ['!wind-down-panel', '!wind-down-ring', '!wind-down-skip', '!summary-card',
-    '!summary-again', '!summary-finish'],
+    '!summary-again', '!summary-finish', 'summary-postcard'],
 };
 
 export default async function run({ page }) {

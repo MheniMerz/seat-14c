@@ -38,6 +38,21 @@
         <ol id="thought-list" class="thought-list"></ol>
       </section>
 
+      <section id="postcards" class="postcards" aria-labelledby="postcards-heading" hidden>
+        <h2 id="postcards-heading">Postcards</h2>
+        <ol id="postcard-list" class="postcard-list"></ol>
+        <label class="setting setting-select cabin-choice">
+          <span>
+            <strong>Cabin</strong>
+            <span id="cabin-hint">A 3-day streak unlocks the Night flight cabin.</span>
+          </span>
+          <select id="cabin" aria-label="Cabin">
+            <option value="day">Day flight</option>
+            <option value="night">Night flight</option>
+          </select>
+        </label>
+      </section>
+
       <details id="settings" class="settings">
         <summary>Cabin settings</summary>
         <fieldset>

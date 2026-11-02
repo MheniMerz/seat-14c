@@ -1,7 +1,8 @@
 import { VisibilityState, World } from '@iwsdk/core';
 import { unlockAudio } from './audio.js';
 import { demoTimeScale, isDesktopEmulator } from './desktop-emulator.js';
-import { nextDestination } from './route.js';
+import { drawPostcard } from './postcard-art.js';
+import { nextDestination, ROUTE } from './route.js';
 import {
   loadProgress,
   loadTasks,
@@ -31,6 +32,7 @@ export function mountCheckIn(world: World): void {
   const thoughtList = root.querySelector<HTMLOListElement>('#thought-list')!;
   const emulatorNote = root.querySelector<HTMLElement>('#emulator-note')!;
   mountSettings(root);
+  const renderPostcards = mountPostcards(root);
   emulatorNote.hidden = !isDesktopEmulator();
   if (demoTimeScale() > 1) {
     emulatorNote.querySelector('.demo-hint')!.textContent =
@@ -58,6 +60,7 @@ export function mountCheckIn(world: World): void {
     if (tasks.length === 0) {
       tasks.push(emptyTask());
     }
+    renderPostcards();
     render();
   };
 
@@ -299,4 +302,61 @@ function mountSettings(root: HTMLElement): void {
   const changed = settings.gazeOnly || settings.oneHand || settings.highContrast ||
     settings.reduceMotion || settings.textSize !== 'M';
   root.querySelector<HTMLDetailsElement>('#settings')!.open = changed;
+}
+
+/**
+ * The postcard collection: one card per destination, collected ones painted,
+ * the rest as blank outlines with their distance. Shown once anything has
+ * been flown. Below it, the cabin choice, which unlocks with a 3-day streak.
+ */
+function mountPostcards(root: HTMLElement): () => void {
+  const section = root.querySelector<HTMLElement>('#postcards')!;
+  const heading = root.querySelector<HTMLElement>('#postcards-heading')!;
+  const list = root.querySelector<HTMLOListElement>('#postcard-list')!;
+  const cabin = root.querySelector<HTMLSelectElement>('#cabin')!;
+  const hint = root.querySelector<HTMLElement>('#cabin-hint')!;
+  const destinations = ROUTE.slice(1);
+
+  cabin.addEventListener('change', () => {
+    const progress = loadProgress();
+    progress.cabinTheme = cabin.value === 'night' ? 'night' : 'day';
+    saveProgress(progress);
+  });
+
+  return () => {
+    const progress = loadProgress();
+    section.hidden = progress.totalMiles <= 0 && progress.postcards.length === 0;
+    heading.textContent =
+      `Postcards · ${progress.postcards.length} of ${destinations.length}`;
+    list.replaceChildren(
+      ...destinations.map((destination) => {
+        const item = document.createElement('li');
+        const collected = progress.postcards.includes(destination.name);
+        item.className = collected ? 'postcard' : 'postcard locked';
+        item.dataset.destination = destination.name;
+        if (collected) {
+          const canvas = document.createElement('canvas');
+          canvas.width = 300;
+          canvas.height = 200;
+          drawPostcard(canvas.getContext('2d')!, 300, 200, destination.name, destination.miles);
+          canvas.setAttribute('role', 'img');
+          canvas.setAttribute('aria-label', `Postcard from ${destination.name}`);
+          item.append(canvas);
+        } else {
+          const left = destination.miles - progress.totalMiles;
+          item.textContent = `${destination.name} · ${left.toLocaleString()} mi to go`;
+        }
+        return item;
+      }),
+    );
+
+    const night = cabin.querySelector<HTMLOptionElement>('option[value="night"]')!;
+    const unlocked = progress.themes.includes('night');
+    night.disabled = !unlocked;
+    night.textContent = unlocked ? 'Night flight' : 'Night flight (locked)';
+    cabin.value = unlocked && progress.cabinTheme === 'night' ? 'night' : 'day';
+    hint.textContent = unlocked
+      ? 'Walnut tray and a warm reading light. Earned with a 3-day streak.'
+      : `A 3-day streak unlocks the Night flight cabin (now ${progress.streakDays}).`;
+  };
 }

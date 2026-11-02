@@ -332,3 +332,40 @@ button:disabled {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+.postcards[hidden] {
+  display: none;
+}
+
+.postcard-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.postcard canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.postcard.locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 3 / 2;
+  padding: 8px;
+  border: 1px dashed var(--cabin-line);
+  border-radius: 8px;
+  color: var(--cabin-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.cabin-choice {
+  padding-top: 4px;
+}

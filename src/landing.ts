@@ -1,3 +1,4 @@
+import { drawPostcard } from './postcard-art.js';
 import { INK } from './accessibility.js';
 import {
   BoxGeometry,
@@ -57,6 +58,7 @@ export class LandingSystem extends createSystem({
   private stackTop!: MeshStandardMaterial;
   private summary!: TextPanel;
   private summaryEntity!: Entity;
+  private postcard!: TextPanel;
   private head = new Vector3();
   private forward = new Vector3();
 
@@ -65,6 +67,7 @@ export class LandingSystem extends createSystem({
     this.buildDoneStack();
     this.buildLaterButton();
     this.buildSummary();
+    this.buildPostcard();
 
     this.cleanupFuncs.push(
       flightPhase.subscribe((phase) => {
@@ -166,6 +169,12 @@ export class LandingSystem extends createSystem({
       setInteractable(button, show, true);
     }
 
+    const reached = this.lastRecord?.reached ?? [];
+    const newest = reached[reached.length - 1];
+    this.postcard.mesh.visible = windDown && newest != null;
+    if (windDown && newest != null) {
+      drawPostcardPanel(this.postcard, newest.name, newest.miles);
+    }
     if (windDown && this.lastRecord != null) {
       this.drawSummary(this.lastRecord, anotherFlight);
       // Slightly above eye line so its buttons hang clear of the Now stand.
@@ -222,8 +231,10 @@ export class LandingSystem extends createSystem({
       ctx.fillStyle = INK.text;
       const reached = record.reached[record.reached.length - 1];
       ctx.fillText(
-        reached
-          ? `Reached ${reached.name}. Postcard stamped.`
+        record.unlocked.includes('night')
+          ? `${progress.streakDays}-day streak: Night flight cabin unlocked!`
+          : reached
+          ? `Reached ${reached.name}. Postcard on your tray.`
           : anotherFlight
             ? 'Fly again, or finish for today.'
             : 'All tasks flown. See you tomorrow.',
@@ -231,6 +242,17 @@ export class LandingSystem extends createSystem({
         345,
       );
     });
+  }
+
+  /** The new postcard stands on the Now stand while the summary shows. */
+  private buildPostcard(): void {
+    this.postcard = createTextPanel('summary-postcard', 0.15, 0.1, 3000);
+    const stand = this.tray.tray.object3D!.getObjectByName('now-stand')!;
+    // Lying on the stand's plate, just above the card that was there.
+    this.postcard.mesh.rotation.x = -Math.PI / 2;
+    this.postcard.mesh.position.set(0, 0.004, 0);
+    this.postcard.mesh.visible = false;
+    stand.add(this.postcard.mesh);
   }
 
   private buildDoneStack(): void {
@@ -339,4 +361,10 @@ function setInteractable(entity: Entity, enabled: boolean, poke: boolean): void 
     entity.removeComponent(RayInteractable);
     if (entity.hasComponent(PokeInteractable)) entity.removeComponent(PokeInteractable);
   }
+}
+
+function drawPostcardPanel(panel: TextPanel, name: string, miles: number): void {
+  if (panel.mesh.userData.destination === name) return;
+  panel.mesh.userData.destination = name;
+  panel.draw((ctx, w, h) => drawPostcard(ctx, w, h, name, miles));
 }

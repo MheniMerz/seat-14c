@@ -35,6 +35,9 @@ device). Systems are registered in `src/index.ts`.
 | `src/flight-timer.ts`   | Take off button, focus clock, progress line under the active card         |
 | `src/landing.ts`        | Chime, Done stack, Not yet, saving the flight, summary card               |
 | `src/accessibility.ts`  | Cabin settings: look-only dwell, one hand, high contrast, text size, reduced motion |
+| `src/wrist-menu.ts`     | Palm-up wrist menu in cruise: Pause / Resume and Land now             |
+| `src/postcard-art.ts`   | Procedural postcard for each destination (cabin texture and check-in) |
+| `src/cabin-theme.ts`    | Day and Night flight cabins; Night unlocks with a 3-day streak        |
 | `src/jar.ts`            | Parking-lot jar: flick toward it or look + pinch to park a thought   |
 | `src/wind-down.ts`      | One-minute breathing guide after landing (4 s in, 6 s out), Skip      |
 | `src/audio.ts`          | Synthesized cabin sounds (WebAudio): clicks, detents, seat-belt chime     |
@@ -66,6 +69,15 @@ device). Systems are registered in `src/index.ts`.
   50° of the jar's direction; letting go of a grabbed card never counts.
   `tests/flick.mjs` drives the emulated hand inside the page so the gesture
   runs at real speed.
+- The wrist menu opens when a palm faces up (grip +X within 50° of up) for
+  a third of a second, sits 13 cm above the wrist so that hand's own
+  fingertips don't hover its buttons (which would switch gaze off), and folds
+  away 2.5 s after the palm turns down. The palm axis was measured in the
+  emulator; confirm it on a headset.
+- Postcards and cabins are the "reason to come back": every destination
+  reached stands its postcard on the Now stand at the summary and adds it to
+  the check-in collection; a 3-day streak unlocks the Night flight cabin
+  (walnut tray, warm reading light, darker seat-back map).
 - Every action works by direct hands and by look + pinch. The dial steps
   through lengths on look + pinch rather than using four chips, because chips
   around a 7 cm dial would sit closer than gaze can separate (about 9 cm).
@@ -116,6 +128,8 @@ npx @iwsdk/cli browser run tests/desktop-click.mjs   # live-site emulator: click
 ./tests/boarding-input.sh     # tutorial by hand gestures, then by look + pinch
 ./tests/steps-input.sh        # steps reveal, tick by gaze and poke; cabin dims
 ./tests/jar-input.sh          # flick vs. not-a-flick, look + pinch, review at check-in
+./tests/wrist-input.sh        # palm up opens the menu; pause, resume, poke Land now
+./tests/rewards-input.sh      # postcard on the tray, collection and Night cabin at check-in
 ./tests/a11y-input.sh         # settings from check-in; a whole flight by gaze alone
 ./tests/wind-down-input.sh    # breathing pace, Skip by poke, summary after a minute
 ./tests/gaze-off.sh           # every look + pinch action by hand ray, gaze off

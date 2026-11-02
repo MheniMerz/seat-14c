@@ -22,6 +22,8 @@ export type Progress = {
   themes: string[];
   /** The boarding-pass tutorial has been completed once. */
   boardingDone: boolean;
+  /** Cabin chosen on the check-in page; only unlocked themes apply. */
+  cabinTheme: 'day' | 'night';
   settings: {
     gazeOnly: boolean;
     oneHand: boolean;
@@ -46,6 +48,7 @@ export function defaultProgress(): Progress {
     postcards: [],
     themes: [],
     boardingDone: false,
+    cabinTheme: 'day',
     settings: {
       gazeOnly: false,
       oneHand: false,

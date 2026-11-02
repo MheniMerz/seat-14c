@@ -9,6 +9,7 @@ import { World } from '@iwsdk/core';
 import projectOptions from 'virtual:iwsdk-project';
 import { AccessibilitySystem } from './accessibility.js';
 import { BoardingSystem } from './boarding.js';
+import { CabinThemeSystem } from './cabin-theme.js';
 import { CalibrationSystem } from './calibration.js';
 import { CardSystem } from './cards.js';
 import { mountCheckIn } from './checkin.js';
@@ -26,6 +27,7 @@ import { SoundscapeSystem } from './soundscape.js';
 import { StepsSystem } from './steps.js';
 import { TraySystem } from './tray.js';
 import { WindDownSystem } from './wind-down.js';
+import { WristMenuSystem } from './wrist-menu.js';
 
 // Gaze debugging aids stay in dev builds only: production shows no reticle
 // and logs nothing, whatever iwsdk.config.json says.
@@ -58,12 +60,14 @@ World.create(
   world.registerSystem(BoardingSystem);
   world.registerSystem(LandingSystem);
   world.registerSystem(WindDownSystem);
+  world.registerSystem(WristMenuSystem);
   world.registerSystem(SeatbackSystem);
   world.registerSystem(StepsSystem);
   world.registerSystem(JarSystem);
   world.registerSystem(FocusSystem);
   world.registerSystem(FeedbackSystem);
   world.registerSystem(SoundscapeSystem);
+  world.registerSystem(CabinThemeSystem);
   // Last, so every panel it scales already exists.
   world.registerSystem(AccessibilitySystem);
   setUpDesktopEmulator();

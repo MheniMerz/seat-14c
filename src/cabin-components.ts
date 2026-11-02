@@ -65,6 +65,17 @@ export const LandingButton = createComponent('LandingButton', {
   action: { type: Types.Enum, default: LandingAction.Later, enum: LandingAction },
 });
 
+export const WristAction = {
+  /** Toggles: Pause, or Resume while paused. */
+  Pause: 'pause',
+  Land: 'land',
+} as const;
+
+/** Buttons on the wrist menu. */
+export const WristButton = createComponent('WristButton', {
+  action: { type: Types.Enum, default: WristAction.Pause, enum: WristAction },
+});
+
 /** The parking-lot jar on the tray. */
 export const ThoughtJar = createComponent('ThoughtJar', {});
 

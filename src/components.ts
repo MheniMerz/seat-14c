@@ -20,6 +20,7 @@ import {
   TutorialBody,
   TutorialTarget,
   WindDownSkip,
+  WristButton,
 } from './cabin-components.js';
 
 export default defineComponents([
@@ -36,4 +37,5 @@ export default defineComponents([
   TutorialBody,
   WindDownSkip,
   ThoughtJar,
+  WristButton,
 ]);
