@@ -72,12 +72,18 @@ check "card dropped on Done -> summary" "$(field "$STATE" "phase")" "winddown"
 check "card rests on Done stack" "$(field "$STATE" "cards[0]['place']")" "done"
 
 POS=$(run positions.mjs)
+check "breathing wind-down comes first" "$(field "$(run wind-down-state.mjs)" "step")" "breathe"
+look_pinch wind-down-skip
+check "look + pinch Skip shows the summary" "$(field "$(run wind-down-state.mjs)" "f\"{step} {summaryVisible}\"")" "summary True"
+POS=$(run positions.mjs)
 look_pinch summary-again
 check "Fly again returns to preflight" "$(phase)" "preflight"
 check "one open task left on the tray" "$(field "$(run state.mjs)" "len(cards)")" "1"
 
 # Land the second task early (dev), save it for later, then finish.
 cli browser run tests/land-later.mjs >/dev/null
+POS=$(run positions.mjs)
+look_pinch wind-down-skip
 POS=$(run positions.mjs)
 look_pinch summary-finish
 sleep 1.5

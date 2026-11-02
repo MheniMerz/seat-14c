@@ -17,7 +17,8 @@ const SCREENS = {
     'tray-lower', 'done-stack', 'takeoff-button', '!NOW'],
   cruise: ['!NOW', '!progress-track', '!dial-plate', 'steps-panel', '!seat-back-screen'],
   landing: ['!NOW', 'done-stack', 'landing-later', '!seat-back-screen'],
-  winddown: ['!summary-card', '!summary-again', '!summary-finish'],
+  winddown: ['!wind-down-panel', '!wind-down-ring', '!wind-down-skip', '!summary-card',
+    '!summary-again', '!summary-finish'],
 };
 
 export default async function run({ page }) {

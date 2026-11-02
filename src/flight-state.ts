@@ -51,6 +51,12 @@ export const flightClock = {
 /** How the active task ended, set once on landing; null before that. */
 export const flightOutcome = signal<FlightOutcome | null>(null);
 
+/**
+ * Wind-down has two steps: a short breathing guide, then the summary card.
+ * Landing sets it to 'breathe'; the guide moves it on when done or skipped.
+ */
+export const windDownStep = signal<'breathe' | 'summary'>('summary');
+
 export function resetFlightPlan(): void {
   flightOutcome.value = null;
   flightPlan.taskId.value = null;

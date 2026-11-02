@@ -46,6 +46,9 @@ POS=$(run positions.mjs)
 ray_pinch done-stack
 check "hand ray on Done stack finishes" "$(field "$(run state.mjs)" "f\"{phase} {cards[1]['place']}\"")" "winddown done"
 POS=$(run positions.mjs)
+ray_pinch wind-down-skip
+check "hand ray presses Skip" "$(field "$(run wind-down-state.mjs)" "step")" "summary"
+POS=$(run positions.mjs)
 ray_pinch summary-again
 check "hand ray presses Fly again" "$(phase)" "preflight"
 
@@ -58,6 +61,8 @@ sleep 3.5
 POS=$(run positions.mjs)
 ray_pinch landing-later
 check "hand ray presses Not yet" "$(field "$(run state.mjs)" "f\"{phase} {cards[0]['place']}\"")" "winddown pocket"
+POS=$(run positions.mjs)
+ray_pinch wind-down-skip
 POS=$(run positions.mjs)
 ray_pinch summary-finish
 # Leaving XR can take a moment; wait up to 5 s for the check-in page.

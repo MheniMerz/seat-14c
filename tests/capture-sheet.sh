@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Rough capture of one flight: five key moments into docs/greybox-flight.png.
+# Rough capture of one flight: six key moments into docs/greybox-flight.png.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 OUT=$(mktemp -d)
@@ -22,7 +22,8 @@ shot 1-preflight "$T"
 cli browser run tests/capture-step.mjs; shot 2-ready "$T"
 cli browser run tests/capture-step.mjs; shot 3-cruise "$T"
 cli browser run tests/capture-step.mjs; shot 4-landing '{"x":0,"y":1.5,"z":-0.5}'
-cli browser run tests/capture-step.mjs; shot 5-summary '{"x":0,"y":1.56,"z":-0.55}'
+cli browser run tests/capture-step.mjs; shot 5-breathe '{"x":0,"y":1.56,"z":-0.55}'
+cli browser run tests/capture-step.mjs; shot 6-summary '{"x":0,"y":1.56,"z":-0.55}'
 mkdir -p docs
 python3 - "$OUT" <<'PY'
 import sys
@@ -32,7 +33,8 @@ shots = [('1-preflight', '1. Preflight: three task cards'),
          ('2-ready', '2. Card on Now stand, dial at 25 min'),
          ('3-cruise', '3. Cruise: progress line, time to go'),
          ('4-landing', '4. Landing: drop on Done or Not yet'),
-         ('5-summary', '5. Summary card')]
+         ('5-breathe', '5. Wind-down: one minute of breathing'),
+         ('6-summary', '6. Summary card')]
 tiles = []
 for name, _ in shots:
     im = Image.open(f'{src}/cap-{name}.png').convert('RGB')

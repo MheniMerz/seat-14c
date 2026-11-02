@@ -23,6 +23,7 @@ import { SeatbackSystem } from './seatback.js';
 import { SoundscapeSystem } from './soundscape.js';
 import { StepsSystem } from './steps.js';
 import { TraySystem } from './tray.js';
+import { WindDownSystem } from './wind-down.js';
 
 // Gaze debugging aids stay in dev builds only: production shows no reticle
 // and logs nothing, whatever iwsdk.config.json says.
@@ -54,6 +55,7 @@ World.create(
   world.registerSystem(FlightTimerSystem);
   world.registerSystem(BoardingSystem);
   world.registerSystem(LandingSystem);
+  world.registerSystem(WindDownSystem);
   world.registerSystem(SeatbackSystem);
   world.registerSystem(StepsSystem);
   world.registerSystem(FocusSystem);

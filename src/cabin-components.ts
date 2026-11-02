@@ -65,6 +65,9 @@ export const LandingButton = createComponent('LandingButton', {
   action: { type: Types.Enum, default: LandingAction.Later, enum: LandingAction },
 });
 
+/** Skips the breathing wind-down straight to the summary card. */
+export const WindDownSkip = createComponent('WindDownSkip', {});
+
 /** One step of the active task, shown beside the Now card in cruise. */
 export const StepRow = createComponent('StepRow', {
   index: { type: Types.Int8, default: 0 },

@@ -13,6 +13,7 @@ export default async function run({ page }) {
         break;
       case 'cruise': s.setTimeScale(100000); break;
       case 'landing': s.setTimeScale(1); s.land('done'); break;
+      case 'winddown': s.skipWindDownTo(60); break;
     }
     return s.phase;
   });

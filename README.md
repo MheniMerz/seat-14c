@@ -34,6 +34,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/dial.ts`           | Flight dial: pinch and twist, snaps to 5/10/25/45; look + pinch steps     |
 | `src/flight-timer.ts`   | Take off button, focus clock, progress line under the active card         |
 | `src/landing.ts`        | Chime, Done stack, Not yet, saving the flight, summary card               |
+| `src/wind-down.ts`      | One-minute breathing guide after landing (4 s in, 6 s out), Skip      |
 | `src/audio.ts`          | Synthesized cabin sounds (WebAudio): clicks, detents, seat-belt chime     |
 | `src/feedback.ts`       | Click on every press, pick/drop sounds on every grab                      |
 | `src/soundscape.ts`     | Engines spool up at takeoff, hum in cruise, spool down on landing         |
@@ -88,6 +89,7 @@ npx @iwsdk/cli browser run tests/desktop-click.mjs   # live-site emulator: click
 ./tests/calibration-input.sh  # timeout, resting hands, Raise / Lower, poke
 ./tests/boarding-input.sh     # tutorial by hand gestures, then by look + pinch
 ./tests/steps-input.sh        # steps reveal, tick by gaze and poke; cabin dims
+./tests/wind-down-input.sh    # breathing pace, Skip by poke, summary after a minute
 ./tests/gaze-off.sh           # every look + pinch action by hand ray, gaze off
 ./tests/gaze-targets.sh       # gaze on each target hovers that target only
 ./tests/fov-check.sh          # every screen against the 70° x 66° glasses view

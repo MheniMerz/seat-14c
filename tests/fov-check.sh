@@ -22,7 +22,7 @@ cli xr set-transform --input-json '{"device":"hand-left","position":{"x":-0.3,"y
 cli xr set-transform --input-json '{"device":"hand-right","position":{"x":0.3,"y":0.9,"z":0}}' >/dev/null
 cli browser run tests/recenter.mjs >/dev/null
 report "$(run fov-check.mjs)"
-for _ in 1 2 3 4 5 6; do
+for _ in 1 2 3 4 5 6 7; do
   run fov-walk.mjs >/dev/null
   report "$(run fov-check.mjs)"
 done

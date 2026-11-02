@@ -18,6 +18,7 @@ import {
   TrayHeightButton,
   TutorialBody,
   TutorialTarget,
+  WindDownSkip,
 } from './cabin-components.js';
 
 export default defineComponents([
@@ -32,4 +33,5 @@ export default defineComponents([
   StepRow,
   TutorialTarget,
   TutorialBody,
+  WindDownSkip,
 ]);

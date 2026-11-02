@@ -25,13 +25,14 @@ import {
   FlightPhase,
   flightPlan,
   setFlightPhase,
+  windDownStep,
 } from './flight-state.js';
 import { FlightRecord, recordFlight } from './progress.js';
 import { loadOpenTasks } from './storage.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
 import { TRAY_LAYOUT, TraySystem } from './tray.js';
 
-const BUTTON = { width: 0.12, height: 0.014, depth: 0.045 };
+export const BUTTON = { width: 0.12, height: 0.014, depth: 0.045 };
 /** Summary buttons sit this far apart so gaze can tell them apart. */
 const SUMMARY_BUTTON_SPACING = 0.15;
 
@@ -64,7 +65,11 @@ export class LandingSystem extends createSystem({
     this.buildSummary();
 
     this.cleanupFuncs.push(
-      flightPhase.subscribe((phase) => this.onPhase(phase)),
+      flightPhase.subscribe((phase) => {
+        // The landing instruction shows on the seat-back screen.
+        if (phase === FlightPhase.Landing) playSeatbeltChime();
+        this.onPhase(phase);
+      }),
       flightOutcome.subscribe((outcome) => {
         if (outcome == null) return;
         this.lastRecord = recordFlight(
@@ -72,8 +77,10 @@ export class LandingSystem extends createSystem({
           flightClock.elapsed.peek(),
           outcome,
         );
+        windDownStep.value = 'breathe';
         setFlightPhase(FlightPhase.WindDown);
       }),
+      windDownStep.subscribe(() => this.onPhase(flightPhase.peek())),
       this.queries.pressedStack.subscribe('disqualify', () => {
         if (flightPhase.peek() === FlightPhase.Landing) this.cards().land('done');
       }),
@@ -138,7 +145,8 @@ export class LandingSystem extends createSystem({
 
   private onPhase(phase: FlightPhase): void {
     const landing = phase === FlightPhase.Landing;
-    const windDown = phase === FlightPhase.WindDown;
+    // The summary waits for the breathing guide to finish.
+    const windDown = phase === FlightPhase.WindDown && windDownStep.peek() === 'summary';
 
     for (const stack of this.queries.doneStacks.entities) {
       setInteractable(stack, landing, false);
@@ -156,9 +164,6 @@ export class LandingSystem extends createSystem({
       setInteractable(button, show, true);
     }
 
-    // The landing instruction shows on the seat-back screen.
-    if (landing) playSeatbeltChime();
-
     if (windDown && this.lastRecord != null) {
       this.drawSummary(this.lastRecord, anotherFlight);
       // Slightly above eye line so its buttons hang clear of the Now stand.
@@ -168,7 +173,7 @@ export class LandingSystem extends createSystem({
   }
 
   /** Float a panel in front of the head, facing it, clear of the Now stand. */
-  private placeAboveTray(entity: Entity, dropBelowEyes: number): void {
+  placeAboveTray(entity: Entity, dropBelowEyes: number): void {
     this.tray.getHeadPosition(this.head);
     this.player.head.getWorldDirection(this.forward).negate();
     this.forward.y = 0;
@@ -287,7 +292,8 @@ export class LandingSystem extends createSystem({
   }
 }
 
-function buttonMesh(name: string, label: string): Mesh {
+/** A labelled cabin button: a rounded slab whose top face carries the text. */
+export function buttonMesh(name: string, label: string): Mesh {
   const canvas = document.createElement('canvas');
   canvas.width = 384;
   canvas.height = 144;
