@@ -64,7 +64,7 @@ POS=$(run positions.mjs)
 dwell wind-down-skip
 check "dwell on Skip shows the summary" "$(field "$(run wind-down-state.mjs)" "f\"{step} {summaryVisible}\"")" "summary True"
 FOV=$(run fov-check.mjs)
-check "large summary card and buttons fit the view" "$(field "$FOV" "f\"{len(elements)} {all(e['ok'] for e in elements)}\"")" "3 True"
+check "large summary, buttons and postcard fit the view" "$(field "$FOV" "f\"{len(elements)} {all(e['ok'] for e in elements)}\"")" "4 True"
 POS=$(run positions.mjs)
 dwell summary-finish 2
 check "dwell on Finish ends the session" "$(field "$(run checkin-state.mjs)" "phase")" "checkin"
