@@ -16,6 +16,7 @@ import {
   VisibilityState,
 } from '@iwsdk/core';
 import { TakeoffButton } from './cabin-components.js';
+import { demoTimeScale } from './desktop-emulator.js';
 import { PALETTE, slabMesh } from './models.js';
 import {
   flightClock,
@@ -42,8 +43,8 @@ export class FlightTimerSystem extends createSystem({
   private buttonFace!: MeshStandardMaterial;
   private progressFill!: Object3D;
   private progressTrack!: Object3D;
-  /** Dev-only multiplier so scripted flights land in seconds. */
-  timeScale = 1;
+  /** Clock multiplier: `?demo` in the URL, or set by scripted dev flights. */
+  timeScale = demoTimeScale();
 
   init(): void {
     const traySystem = this.world.getSystem(TraySystem)!;

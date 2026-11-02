@@ -41,6 +41,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/focus.ts`          | Cruise focus: dims the passthrough room, fades all but the active card    |
 | `src/route.ts`          | Fictional destinations by cumulative miles; postcards when reached        |
 | `src/seatback.ts`       | Seat-back screen: in-flight map of the planned and flown route            |
+| `src/desktop-emulator.ts` | Live-site emulator for desktop visitors: hands + cursor gaze, `?demo` |
 | `src/models.ts`         | Cabin palette and the rounded-slab model helper                           |
 | `src/cabin-components.ts` | ECS components for all of the above                                     |
 | `tests/`                | Scripted checks against the managed browser (see below)                   |
@@ -81,6 +82,7 @@ npx @iwsdk/cli browser run tests/checkin-smoke.mjs   # check-in page
 npx @iwsdk/cli browser run tests/cards-smoke.mjs     # card rules
 npx @iwsdk/cli browser run tests/dial-smoke.mjs      # dial, take off, clock
 npx @iwsdk/cli browser run tests/route-unit.mjs      # miles, streak, postcards
+npx @iwsdk/cli browser run tests/desktop-click.mjs   # live-site emulator: click = look + pinch
 ./tests/cards-input.sh        # gaze + pinch and pinch-grab on cards
 ./tests/dial-input.sh         # pinch-and-twist, gaze + pinch dial / Take off
 ./tests/calibration-input.sh  # timeout, resting hands, Raise / Lower, poke
@@ -101,6 +103,20 @@ only dev shortcut in `flight-e2e.sh` is a faster flight clock.
 Every push to `main` builds and publishes to GitHub Pages
 (`.github/workflows/deploy.yml`). One-time setup: repository Settings → Pages
 → Source: **GitHub Actions**. Production builds hide the gaze debug reticle,
-turn off gaze console diagnostics and leave out the dev controls and emulator.
+turn off gaze console diagnostics and leave out the dev controls.
+
+### Trying the live site without a headset
+
+The production build carries IWER, so a desktop browser can fly the whole
+thing (`dev.emulator.injectOnBuild` + `activation: "always"` in
+`iwsdk.config.json`). It stays off in headset and phone browsers: the
+`userAgentException` pattern matches Quest/Oculus Browser, Pico, Wolvic,
+Android and iOS, so those keep their native WebXR. On desktop the emulator
+starts as Meta VR Glasses in hand mode with cursor gaze: **left click** an
+object to look at it and pinch, **right drag** to turn your head. Add `?demo`
+to the URL to run flights ten times faster.
+
+The emulator loads its virtual room from unpkg.com; if that is blocked the
+session still works against a plain background.
 
 - IWER emulator controls: https://iwsdk.dev/guides/02-testing-experience.html#iwer-controls

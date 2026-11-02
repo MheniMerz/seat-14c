@@ -52,7 +52,12 @@
   "dev": {
     "emulator": {
       "device": "metaVRGlasses",
-      "environment": "office_small"
+      "environment": "office_small",
+      "injectOnBuild": true,
+      "activation": "always",
+      "userAgentException": {
+        "source": "OculusBrowser|Quest|Pico|Wolvic|Android|iPhone|iPad|Mobile"
+      }
     }
   }
 }

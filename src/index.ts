@@ -11,6 +11,7 @@ import { BoardingSystem } from './boarding.js';
 import { CalibrationSystem } from './calibration.js';
 import { CardSystem } from './cards.js';
 import { mountCheckIn } from './checkin.js';
+import { setUpDesktopEmulator } from './desktop-emulator.js';
 import { DialSystem } from './dial.js';
 import { FlightSystem } from './flight-state.js';
 import { FeedbackSystem } from './feedback.js';
@@ -58,5 +59,6 @@ World.create(
   world.registerSystem(FocusSystem);
   world.registerSystem(FeedbackSystem);
   world.registerSystem(SoundscapeSystem);
+  setUpDesktopEmulator();
   mountCheckIn(world);
 });

@@ -184,3 +184,44 @@ button:disabled {
   font: 12px ui-monospace, monospace;
   pointer-events: none;
 }
+
+.emulator-note {
+  padding: 16px 18px;
+  border: 1px solid var(--cabin-line);
+  border-radius: var(--radius);
+  background: var(--cabin-panel);
+  color: var(--cabin-muted);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.emulator-note[hidden] {
+  display: none;
+}
+
+.emulator-note h2 {
+  margin: 0 0 6px;
+  color: var(--cabin-text);
+  font-size: 16px;
+}
+
+.emulator-note p,
+.emulator-note ul {
+  margin: 0 0 8px;
+}
+
+.emulator-note ul {
+  padding-left: 20px;
+}
+
+.emulator-note strong {
+  color: var(--cabin-text);
+}
+
+.emulator-note a {
+  color: var(--cabin-accent);
+}
+
+.emulator-note .demo-hint {
+  margin: 0;
+}

@@ -1,5 +1,6 @@
 import { VisibilityState, World } from '@iwsdk/core';
 import { unlockAudio } from './audio.js';
+import { demoTimeScale, isDesktopEmulator } from './desktop-emulator.js';
 import { nextDestination } from './route.js';
 import {
   loadProgress,
@@ -22,6 +23,12 @@ export function mountCheckIn(world: World): void {
   const boardButton = root.querySelector<HTMLButtonElement>('#board')!;
   const status = root.querySelector<HTMLElement>('#board-status')!;
   const stats = root.querySelector<HTMLElement>('#stats')!;
+  const emulatorNote = root.querySelector<HTMLElement>('#emulator-note')!;
+  emulatorNote.hidden = !isDesktopEmulator();
+  if (demoTimeScale() > 1) {
+    emulatorNote.querySelector('.demo-hint')!.textContent =
+      'Demo mode: flights run ten times faster.';
+  }
 
   // Finished and parked tasks are kept for history; only open ones are shown.
   let archived: Task[] = [];

@@ -10,7 +10,7 @@ fails = [l for l in lines if l.startswith('FAIL')]
 print(f'{sys.argv[1]:<20} {sum(l.startswith(\"PASS\") for l in lines):>3} pass  {len(fails)} fail')
 for f in fails: print('   ', f)" "$1"
 }
-for t in checkin-smoke cards-smoke dial-smoke route-unit; do
+for t in checkin-smoke cards-smoke dial-smoke route-unit desktop-click; do
   npx @iwsdk/cli xr exit >/dev/null 2>&1
   sleep 1
   npx @iwsdk/cli browser run "tests/$t.mjs" 2>&1 \
