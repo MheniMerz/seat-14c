@@ -36,7 +36,10 @@ check "flick away from the jar does not" "$(field "$F" "flickAway")" "1"
 check "slow pinch-and-carry does not" "$(field "$F" "slowCarry")" "1"
 check "a slip lies in the jar" "$(field "$(jar)" "f\"{slips} {thoughts}\"")" "1 1"
 
-# 2. Look at the jar and pinch.
+# 2. Look at the jar and pinch, with the hand back at rest (a hand left
+# hovering near the tray turns gaze off).
+xr set-transform '{"device":"hand-right","position":{"x":0.3,"y":1.0,"z":0}}'
+sleep 0.3
 POS=$(run positions.mjs)
 xr look-at "{\"device\":\"gaze\",\"target\":$(at jar-hit)}"
 sleep 0.4
