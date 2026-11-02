@@ -45,6 +45,13 @@ export default async function run({ page, frame }) {
   await page.mouse.up({ button: 'left' });
   await page.waitForTimeout(800);
   const after = await app.evaluate((name) => window.seat14c.cards().find((c) => c.name === name)?.place, target.name);
+  // Leave the emulator as other suites expect it: head-locked gaze.
+  await app.evaluate(() => {
+    const device = window.IWER_DEVICE;
+    for (const key of Object.getOwnPropertySymbols(device)) {
+      device[key]?.devui?.setGazeMode?.('head-locked');
+    }
+  });
   check('left click on a tray card puts it on the Now stand', after === 'now', `${target.name} -> ${after} at ${x.toFixed(0)},${y.toFixed(0)}`);
   return report();
 }

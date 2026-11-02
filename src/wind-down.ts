@@ -1,3 +1,4 @@
+import { CABIN, cabinSettings, INK } from './accessibility.js';
 import {
   createSystem,
   Entity,
@@ -40,8 +41,6 @@ export class WindDownSystem extends createSystem({
 }) {
   /** Seconds into the wind-down; paused while the headset is blurred. */
   elapsed = 0;
-  /** Reduced motion: the ring keeps its size and only changes colour. */
-  reduceMotion = false;
   private panel!: TextPanel;
   private root!: Entity;
   private ring!: Mesh;
@@ -97,7 +96,8 @@ export class WindDownSystem extends createSystem({
     const fill = breath.inhale
       ? easeInOut(breath.progress)
       : 1 - easeInOut(breath.progress);
-    const scale = this.reduceMotion ? 1 : RING_MIN + (1 - RING_MIN) * fill;
+    // Reduced motion: the ring keeps its size and only changes colour.
+    const scale = CABIN.reducedMotion ? 1 : RING_MIN + (1 - RING_MIN) * fill;
     this.ring.scale.setScalar(scale);
     this.ringMaterial.color.setRGB(
       0.35 + 0.65 * fill,
@@ -139,22 +139,27 @@ export class WindDownSystem extends createSystem({
     if (label === this.shown) return;
     this.shown = label;
     this.panel.draw((ctx, w, h) => {
-      ctx.fillStyle = 'rgba(20, 24, 42, 0.92)';
+      ctx.fillStyle = INK.panel;
       roundRect(ctx, 0, 0, w, h, 40);
       ctx.fill();
       const x = w * 0.36;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
-      ctx.fillStyle = '#ffb547';
+      ctx.fillStyle = INK.accent;
       ctx.font = '600 26px system-ui, sans-serif';
       ctx.fillText(`WIND-DOWN · BREATH ${breath.index + 1} OF ${BREATHS}`, x, 62);
-      ctx.fillStyle = '#eef1fb';
+      ctx.fillStyle = INK.text;
       ctx.font = '700 56px system-ui, sans-serif';
       ctx.fillText(breath.inhale ? 'Breathe in' : 'Breathe out', x, 140);
-      ctx.fillStyle = '#a6aed0';
+      ctx.fillStyle = INK.muted;
       ctx.font = '500 30px system-ui, sans-serif';
+      const { gazeOnly, oneHand } = cabinSettings.peek();
       ctx.fillText(
-        breath.inhale ? 'Slowly open both hands' : 'Slowly close them again',
+        gazeOnly
+          ? breath.inhale ? 'As the ring grows' : 'As the ring shrinks'
+          : breath.inhale
+            ? oneHand ? 'Slowly open your hand' : 'Slowly open both hands'
+            : 'Slowly close again',
         x,
         192,
       );

@@ -1,3 +1,4 @@
+import { INK } from './accessibility.js';
 import {
   createSystem,
   Entity,
@@ -161,7 +162,7 @@ export class StepsSystem extends createSystem({
 
 function drawRow(panel: TextPanel, step: Subtask): void {
   panel.draw((ctx, w, h) => {
-    ctx.fillStyle = step.done ? 'rgba(31, 52, 44, 0.92)' : 'rgba(20, 24, 42, 0.9)';
+    ctx.fillStyle = step.done ? 'rgba(31, 52, 44, 0.92)' : INK.panel;
     roundRect(ctx, 0, 0, w, h, h / 2);
     ctx.fill();
 
@@ -169,7 +170,7 @@ function drawRow(panel: TextPanel, step: Subtask): void {
     const bx = h * 0.3;
     const by = (h - box) / 2;
     ctx.lineWidth = 6;
-    ctx.strokeStyle = step.done ? '#7dffa8' : '#a6aed0';
+    ctx.strokeStyle = step.done ? '#7dffa8' : INK.muted;
     roundRect(ctx, bx, by, box, box, 10);
     ctx.stroke();
     if (step.done) {
@@ -180,7 +181,7 @@ function drawRow(panel: TextPanel, step: Subtask): void {
       ctx.stroke();
     }
 
-    ctx.fillStyle = step.done ? '#a6d9b8' : '#eef1fb';
+    ctx.fillStyle = step.done ? '#a6d9b8' : INK.text;
     ctx.font = '600 52px system-ui, sans-serif';
     ctx.textBaseline = 'middle';
     let text = step.title;

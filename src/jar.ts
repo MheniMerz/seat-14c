@@ -1,3 +1,4 @@
+import { CABIN, INK } from './accessibility.js';
 import {
   CylinderGeometry,
   createSystem,
@@ -48,8 +49,6 @@ export class JarSystem extends createSystem({
   pressedJar: { required: [ThoughtJar, Pressed] },
   grabbed: { required: [Grabbed] },
 }) {
-  /** Reduced motion: slips appear in the jar instead of flying there. */
-  reduceMotion = false;
   /** Thoughts parked on this flight. */
   parkedThisFlight = 0;
   private jar!: Entity;
@@ -147,7 +146,7 @@ export class JarSystem extends createSystem({
     const count = loadThoughts().length;
     this.slips.forEach((slip, i) => (slip.visible = i < Math.min(count, MAX_SLIPS)));
     this.label.draw((ctx, w, h) => {
-      ctx.fillStyle = count > 0 ? '#eef1fb' : '#a6aed0';
+      ctx.fillStyle = count > 0 ? INK.text : INK.muted;
       ctx.font = '600 44px system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -157,9 +156,10 @@ export class JarSystem extends createSystem({
 
     const slip = this.slips[Math.min(count, MAX_SLIPS) - 1];
     this.flyTo.copy(slip.userData.rest as Vector3);
-    if (from == null || this.reduceMotion) {
-      // Look + pinch: drop in from just above the jar.
-      if (this.reduceMotion) return playDrop();
+    if (from == null || CABIN.reducedMotion) {
+      // Reduced motion: the slip is simply there. Look + pinch: it drops in
+      // from just above the jar.
+      if (CABIN.reducedMotion) return playDrop();
       this.flyFrom.set(this.flyTo.x, JAR.height + 0.05, this.flyTo.z);
     } else {
       slip.parent!.worldToLocal(this.flyFrom.copy(from));

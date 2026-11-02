@@ -1,3 +1,4 @@
+import { INK } from './accessibility.js';
 import {
   createSystem,
   effect,
@@ -31,9 +32,16 @@ const COLORS = {
   land: '#1b2a4a',
   grid: 'rgba(166, 174, 208, 0.12)',
   future: 'rgba(166, 174, 208, 0.55)',
-  flown: '#ffb547',
-  text: '#eef1fb',
-  muted: '#a6aed0',
+  // Follow the cabin's ink, which high contrast changes.
+  get flown() {
+    return INK.accent;
+  },
+  get text() {
+    return INK.text;
+  },
+  get muted() {
+    return INK.muted;
+  },
 };
 
 type MapView = { minX: number; minY: number; scale: number; offX: number; offY: number };

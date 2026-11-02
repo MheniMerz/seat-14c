@@ -1,3 +1,4 @@
+import { CABIN, INK } from './accessibility.js';
 import {
   BoxGeometry,
   CanvasTexture,
@@ -119,7 +120,7 @@ export class DialSystem extends createSystem({
       }
     } else {
       const target = this.knob.getValue(DialKnob, 'targetAngle')!;
-      const k = 1 - Math.exp(-delta * EASE_RATE);
+      const k = CABIN.reducedMotion ? 1 : 1 - Math.exp(-delta * EASE_RATE);
       knob.rotation.set(0, knob.rotation.y + (target - knob.rotation.y) * k, 0);
     }
 
@@ -181,12 +182,12 @@ export class DialSystem extends createSystem({
       const angle = STOP_ANGLES[i];
       const x = c - Math.sin(angle) * c * 0.74;
       const y = c - Math.cos(angle) * c * 0.74;
-      ctx.fillStyle = length === minutes ? '#ffb547' : '#a6aed0';
+      ctx.fillStyle = length === minutes ? INK.accent : INK.muted;
       ctx.font = `${length === minutes ? 700 : 500} 30px system-ui, sans-serif`;
       ctx.fillText(String(length), x, y);
     });
 
-    ctx.fillStyle = '#eef1fb';
+    ctx.fillStyle = INK.text;
     ctx.font = '600 24px system-ui, sans-serif';
     ctx.fillText(label, c, CANVAS_SIZE * 0.86);
     this.texture.needsUpdate = true;

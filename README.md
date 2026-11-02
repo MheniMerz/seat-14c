@@ -34,6 +34,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/dial.ts`           | Flight dial: pinch and twist, snaps to 5/10/25/45; look + pinch steps     |
 | `src/flight-timer.ts`   | Take off button, focus clock, progress line under the active card         |
 | `src/landing.ts`        | Chime, Done stack, Not yet, saving the flight, summary card               |
+| `src/accessibility.ts`  | Cabin settings: look-only dwell, one hand, high contrast, text size, reduced motion |
 | `src/jar.ts`            | Parking-lot jar: flick toward it or look + pinch to park a thought   |
 | `src/wind-down.ts`      | One-minute breathing guide after landing (4 s in, 6 s out), Skip      |
 | `src/audio.ts`          | Synthesized cabin sounds (WebAudio): clicks, detents, seat-belt chime     |
@@ -69,6 +70,26 @@ device). Systems are registered in `src/index.ts`.
   through lengths on look + pinch rather than using four chips, because chips
   around a 7 cm dial would sit closer than gaze can separate (about 9 cm).
 
+## Accessibility
+
+Set on the check-in page under **Cabin settings**, saved with progress and
+applied on every boarding:
+
+- **Look only.** Resting the gaze on any target for a second selects it; a
+  ring fills around the target meanwhile. After a selection nothing arms
+  again until the eyes move 4°, so whatever appears under a resting gaze
+  (the summary where Skip was) is never selected by accident.
+- **One hand.** Calibration accepts a single resting hand; prompts say "a
+  hand" instead of "both hands". Every action already works one-handed.
+- **High contrast.** Black panels, white text, yellow accents, and a darker
+  room in cruise (70% instead of 45%).
+- **Text size.** Small, medium or large (0.85x, 1x, 1.3x) for the floating
+  panels: hints, steps, wind-down and summary. `tests/a11y-input.sh` checks
+  the large panels still fit the glasses' view.
+- **Reduce motion.** Cards, the dial and parked slips move into place at once;
+  the cabin lights change instantly; the breathing ring changes colour
+  instead of size.
+
 ## Dev controls (dev builds only)
 
 - Keys `1`–`6` jump between the XR phases: calibrating, boarding, preflight,
@@ -95,6 +116,7 @@ npx @iwsdk/cli browser run tests/desktop-click.mjs   # live-site emulator: click
 ./tests/boarding-input.sh     # tutorial by hand gestures, then by look + pinch
 ./tests/steps-input.sh        # steps reveal, tick by gaze and poke; cabin dims
 ./tests/jar-input.sh          # flick vs. not-a-flick, look + pinch, review at check-in
+./tests/a11y-input.sh         # settings from check-in; a whole flight by gaze alone
 ./tests/wind-down-input.sh    # breathing pace, Skip by poke, summary after a minute
 ./tests/gaze-off.sh           # every look + pinch action by hand ray, gaze off
 ./tests/gaze-targets.sh       # gaze on each target hovers that target only

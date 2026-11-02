@@ -17,6 +17,6 @@ for t in checkin-smoke cards-smoke dial-smoke route-unit desktop-click; do
     | python3 -c "import json,sys;d=json.load(sys.stdin);print(d.get('data',{}).get('result') or 'FAIL could not run')" \
     | summary "$t"
 done
-for t in cards-input dial-input calibration-input boarding-input steps-input wind-down-input jar-input gaze-off gaze-targets fov-check flight-e2e; do
+for t in cards-input dial-input calibration-input boarding-input steps-input wind-down-input jar-input a11y-input gaze-off gaze-targets fov-check flight-e2e; do
   "./tests/$t.sh" 2>&1 | summary "$t"
 done

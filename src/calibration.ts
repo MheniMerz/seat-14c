@@ -1,3 +1,4 @@
+import { cabinSettings, INK } from './accessibility.js';
 import {
   CanvasTexture,
   createSystem,
@@ -60,6 +61,7 @@ export class CalibrationSystem extends createSystem({
   private hadSample = false;
   private shownStep = -1;
   private last = { left: new Vector3(), right: new Vector3() };
+  private tracked = { left: false, right: false };
   private now = { left: new Vector3(), right: new Vector3() };
   private head = new Vector3();
   private forward = new Vector3();
@@ -78,6 +80,7 @@ export class CalibrationSystem extends createSystem({
           this.elapsed = 0;
           this.stillTime = 0;
           this.hadSample = false;
+          this.tracked.left = this.tracked.right = false;
           this.shownStep = -1;
         }
         this.setButtonsEnabled(phase === FlightPhase.Preflight);
@@ -120,25 +123,33 @@ export class CalibrationSystem extends createSystem({
     this.elapsed += delta;
     this.tray.getHeadPosition(this.head);
 
-    let tracked = true;
+    // Both hands must rest, or any one hand in one-hand mode.
+    const oneHand = cabinSettings.peek().oneHand;
+    let resting = 0;
+    let restingY = 0;
     let moving = false;
     for (const hand of HANDS) {
-      if (this.input.xr.getPrimaryInputSource(hand) == null) {
-        tracked = false;
-        continue;
-      }
+      if (this.input.xr.getPrimaryInputSource(hand) == null) continue;
       const position = this.player.gripSpaces[hand].getWorldPosition(this.now[hand]);
-      if (this.head.y - position.y < MIN_HAND_DROP) tracked = false;
-      if (this.hadSample && position.distanceTo(this.last[hand]) > STILL_SPEED * delta) {
+      const wasTracked = this.tracked[hand];
+      this.tracked[hand] = this.head.y - position.y >= MIN_HAND_DROP;
+      if (!this.tracked[hand]) continue;
+      if (wasTracked && this.hadSample && position.distanceTo(this.last[hand]) > STILL_SPEED * delta) {
         moving = true;
       }
       this.last[hand].copy(position);
+      resting++;
+      restingY += position.y;
+    }
+    for (const hand of HANDS) {
+      if (this.input.xr.getPrimaryInputSource(hand) == null) this.tracked[hand] = false;
     }
     this.hadSample = true;
-    this.stillTime = tracked && !moving ? this.stillTime + delta : 0;
+    const enough = oneHand ? resting >= 1 : resting === 2;
+    this.stillTime = enough && !moving ? this.stillTime + delta : 0;
 
     if (this.stillTime >= STILL_SECONDS) {
-      const handsY = (this.now.left.y + this.now.right.y) / 2;
+      const handsY = restingY / resting;
       this.tray.setDrop(this.head.y - (handsY + TRAY_ABOVE_HANDS));
       this.finish('hands');
     } else if (this.elapsed >= TIMEOUT_SECONDS) {
@@ -180,27 +191,33 @@ export class CalibrationSystem extends createSystem({
     this.shownStep = step;
 
     this.hint.draw((ctx, w, h) => {
-      ctx.fillStyle = 'rgba(20, 24, 42, 0.88)';
+      ctx.fillStyle = INK.panel;
       roundRect(ctx, 0, 0, w, h, 36);
       ctx.fill();
 
       const cx = 90;
       const cy = h / 2;
       ctx.lineWidth = 14;
-      ctx.strokeStyle = '#343c63';
+      ctx.strokeStyle = INK.line;
       ctx.beginPath();
       ctx.arc(cx, cy, 46, 0, Math.PI * 2);
       ctx.stroke();
-      ctx.strokeStyle = '#ffb547';
+      ctx.strokeStyle = INK.accent;
       ctx.beginPath();
       ctx.arc(cx, cy, 46, -Math.PI / 2, -Math.PI / 2 + fill * Math.PI * 2);
       ctx.stroke();
 
-      ctx.fillStyle = '#eef1fb';
+      ctx.fillStyle = INK.text;
       ctx.font = '600 40px system-ui, sans-serif';
       ctx.textBaseline = 'middle';
-      ctx.fillText('Rest both hands where your tray goes', 170, cy - 22);
-      ctx.fillStyle = '#a6aed0';
+      ctx.fillText(
+        cabinSettings.peek().oneHand
+          ? 'Rest a hand where your tray goes'
+          : 'Rest both hands where your tray goes',
+        170,
+        cy - 22,
+      );
+      ctx.fillStyle = INK.muted;
       ctx.font = '500 32px system-ui, sans-serif';
       ctx.fillText(`Default height in ${secondsLeft}s`, 170, cy + 30);
     });

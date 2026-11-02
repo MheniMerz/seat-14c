@@ -7,6 +7,7 @@
 
 import { World } from '@iwsdk/core';
 import projectOptions from 'virtual:iwsdk-project';
+import { AccessibilitySystem } from './accessibility.js';
 import { BoardingSystem } from './boarding.js';
 import { CalibrationSystem } from './calibration.js';
 import { CardSystem } from './cards.js';
@@ -63,6 +64,8 @@ World.create(
   world.registerSystem(FocusSystem);
   world.registerSystem(FeedbackSystem);
   world.registerSystem(SoundscapeSystem);
+  // Last, so every panel it scales already exists.
+  world.registerSystem(AccessibilitySystem);
   setUpDesktopEmulator();
   mountCheckIn(world);
 });

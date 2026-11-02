@@ -38,6 +38,50 @@
         <ol id="thought-list" class="thought-list"></ol>
       </section>
 
+      <details id="settings" class="settings">
+        <summary>Cabin settings</summary>
+        <fieldset>
+          <legend class="visually-hidden">Accessibility</legend>
+          <label class="setting">
+            <input type="checkbox" data-setting="gazeOnly" />
+            <span>
+              <strong>Look only</strong>
+              Rest your eyes on something for a second to select it. No pinching
+              needed.
+            </span>
+          </label>
+          <label class="setting">
+            <input type="checkbox" data-setting="oneHand" />
+            <span>
+              <strong>One hand</strong>
+              Calibrate the tray with either hand; nothing asks for both.
+            </span>
+          </label>
+          <label class="setting">
+            <input type="checkbox" data-setting="highContrast" />
+            <span>
+              <strong>High contrast</strong>
+              Black panels, white text, and a darker room during focus.
+            </span>
+          </label>
+          <label class="setting">
+            <input type="checkbox" data-setting="reduceMotion" />
+            <span>
+              <strong>Reduce motion</strong>
+              Things move into place at once instead of gliding.
+            </span>
+          </label>
+          <label class="setting setting-select">
+            <span><strong>Text size</strong> in the cabin</span>
+            <select data-setting="textSize">
+              <option value="S">Small</option>
+              <option value="M">Medium</option>
+              <option value="L">Large</option>
+            </select>
+          </label>
+        </fieldset>
+      </details>
+
       <aside id="emulator-note" class="emulator-note" hidden>
         <h2>No headset? You're in the emulator</h2>
         <p>

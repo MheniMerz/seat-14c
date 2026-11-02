@@ -265,3 +265,70 @@ button:disabled {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.settings {
+  border: 1px solid var(--cabin-line);
+  border-radius: var(--radius);
+  background: var(--cabin-panel);
+}
+
+.settings summary {
+  padding: 14px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0 18px 16px;
+  border: 0;
+}
+
+.setting {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--cabin-muted);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.setting strong {
+  display: block;
+  color: var(--cabin-text);
+}
+
+.setting input[type='checkbox'] {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 1px 0 0;
+  accent-color: var(--cabin-accent);
+}
+
+.setting-select {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting select {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--cabin-line);
+  border-radius: 10px;
+  background: var(--cabin-bg);
+  color: var(--cabin-text);
+  font: inherit;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

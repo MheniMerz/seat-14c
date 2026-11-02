@@ -7,6 +7,7 @@ import {
   loadTasks,
   loadThoughts,
   MAX_TASKS,
+  saveProgress,
   newTaskId,
   ParkedThought,
   saveTasks,
@@ -29,6 +30,7 @@ export function mountCheckIn(world: World): void {
   const thoughtsSection = root.querySelector<HTMLElement>('#thoughts')!;
   const thoughtList = root.querySelector<HTMLOListElement>('#thought-list')!;
   const emulatorNote = root.querySelector<HTMLElement>('#emulator-note')!;
+  mountSettings(root);
   emulatorNote.hidden = !isDesktopEmulator();
   if (demoTimeScale() > 1) {
     emulatorNote.querySelector('.demo-hint')!.textContent =
@@ -273,4 +275,28 @@ function iconButton(
   button.setAttribute('aria-label', ariaLabel);
   button.addEventListener('click', onClick);
   return button;
+}
+
+/** Accessibility settings, saved with progress and applied on boarding. */
+function mountSettings(root: HTMLElement): void {
+  type Settings = ReturnType<typeof loadProgress>['settings'];
+  const controls = root.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
+    '#settings [data-setting]',
+  );
+  const settings = loadProgress().settings;
+  for (const control of controls) {
+    const key = control.dataset.setting as keyof Settings;
+    if (control instanceof HTMLInputElement) control.checked = settings[key] === true;
+    else control.value = String(settings[key]);
+    control.addEventListener('change', () => {
+      const progress = loadProgress();
+      const value = control instanceof HTMLInputElement ? control.checked : control.value;
+      progress.settings = { ...progress.settings, [key]: value };
+      saveProgress(progress);
+    });
+  }
+  // Keep the panel open for anyone who has changed something.
+  const changed = settings.gazeOnly || settings.oneHand || settings.highContrast ||
+    settings.reduceMotion || settings.textSize !== 'M';
+  root.querySelector<HTMLDetailsElement>('#settings')!.open = changed;
 }

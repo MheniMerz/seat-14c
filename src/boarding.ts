@@ -1,3 +1,4 @@
+import { INK } from './accessibility.js';
 import {
   BoxGeometry,
   CanvasTexture,
@@ -246,18 +247,18 @@ export class BoardingSystem extends createSystem({
     const order: Step[] = ['stub', 'pocket', 'dial'];
     const current = order.indexOf(this.step);
     this.hint.draw((ctx, w, h) => {
-      ctx.fillStyle = 'rgba(20, 24, 42, 0.88)';
+      ctx.fillStyle = INK.panel;
       roundRect(ctx, 0, 0, w, h, 36);
       ctx.fill();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = this.step === 'done' ? '#7dffa8' : '#eef1fb';
+      ctx.fillStyle = this.step === 'done' ? '#7dffa8' : INK.text;
       ctx.font = '600 40px system-ui, sans-serif';
       ctx.fillText(HINTS[this.step], w / 2, h * 0.42);
       order.forEach((_, i) => {
         ctx.beginPath();
         ctx.arc(w / 2 + (i - 1) * 34, h * 0.8, 8, 0, Math.PI * 2);
-        ctx.fillStyle = i < current || current < 0 ? '#ffb547' : i === current ? '#eef1fb' : '#343c63';
+        ctx.fillStyle = i < current || current < 0 ? INK.accent : i === current ? INK.text : INK.line;
         ctx.fill();
       });
     });

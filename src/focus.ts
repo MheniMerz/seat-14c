@@ -1,3 +1,4 @@
+import { CABIN } from './accessibility.js';
 import {
   BackSide,
   Color,
@@ -12,8 +13,6 @@ import { CardSystem } from './cards.js';
 import { flightPhase, FlightPhase } from './flight-state.js';
 import { TraySystem } from './tray.js';
 
-/** How dark the passthrough room gets in cruise (0 to 1). */
-const CABIN_DIM = 0.45;
 /** How much everything but the active card darkens in cruise. */
 const FADE_BACK = 0.55;
 /** Seconds to dim at takeoff and to come back up at landing. */
@@ -69,14 +68,17 @@ export class FocusSystem extends createSystem({}) {
   update(delta: number): void {
     const cruising = flightPhase.peek() === FlightPhase.Cruise;
     const rate = cruising ? delta / DIM_SECONDS : -delta / RISE_SECONDS;
-    const level = Math.min(1, Math.max(0, this.level + rate));
+    // Reduced motion: the lights change at once instead of fading.
+    const level = CABIN.reducedMotion
+      ? (cruising ? 1 : 0)
+      : Math.min(1, Math.max(0, this.level + rate));
     if (level === this.level) return;
     this.level = level;
 
     // Ease in and out so the lights dim like a cabin, not a switch.
     const eased = level * level * (3 - 2 * level);
     const dome = this.dome.material as MeshBasicMaterial;
-    dome.opacity = CABIN_DIM * eased;
+    dome.opacity = CABIN.focusDim * eased;
     this.dome.visible = level > 0;
     this.player.head.getWorldPosition(this.dome.position);
 

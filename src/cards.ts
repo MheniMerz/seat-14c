@@ -1,3 +1,4 @@
+import { CABIN } from './accessibility.js';
 import {
   BoxGeometry,
   createSystem,
@@ -121,7 +122,7 @@ export class CardSystem extends createSystem({
 
   update(delta: number): void {
     this.time += delta;
-    const k = 1 - Math.exp(-delta * EASE_RATE);
+    const k = CABIN.reducedMotion ? 1 : 1 - Math.exp(-delta * EASE_RATE);
 
     for (const card of this.queries.cards.entities) {
       if (card.getValue(TaskCard, 'held')) continue;

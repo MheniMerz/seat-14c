@@ -1,3 +1,4 @@
+import { INK } from './accessibility.js';
 import {
   BoxGeometry,
   CanvasTexture,
@@ -188,23 +189,23 @@ export class LandingSystem extends createSystem({
   private drawSummary(record: FlightRecord, anotherFlight: boolean): void {
     const { progress } = record;
     this.summary.draw((ctx, w, h) => {
-      ctx.fillStyle = 'rgba(20, 24, 42, 0.92)';
+      ctx.fillStyle = INK.panel;
       roundRect(ctx, 0, 0, w, h, 40);
       ctx.fill();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'alphabetic';
 
-      ctx.fillStyle = '#ffb547';
+      ctx.fillStyle = INK.accent;
       ctx.font = '600 30px system-ui, sans-serif';
       ctx.fillText(
         record.outcome === 'done' ? 'TASK DONE' : 'SAVED FOR NEXT FLIGHT',
         w / 2,
         70,
       );
-      ctx.fillStyle = '#eef1fb';
+      ctx.fillStyle = INK.text;
       ctx.font = '700 92px system-ui, sans-serif';
       ctx.fillText(`+${record.miles.toLocaleString()} miles`, w / 2, 175);
-      ctx.fillStyle = '#a6aed0';
+      ctx.fillStyle = INK.muted;
       ctx.font = '500 32px system-ui, sans-serif';
       const parked = this.world.getSystem(JarSystem)?.parkedThisFlight ?? 0;
       ctx.fillText(
@@ -218,7 +219,7 @@ export class LandingSystem extends createSystem({
         w / 2,
         285,
       );
-      ctx.fillStyle = '#eef1fb';
+      ctx.fillStyle = INK.text;
       const reached = record.reached[record.reached.length - 1];
       ctx.fillText(
         reached
