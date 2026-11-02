@@ -18,6 +18,7 @@ import { FeedbackSystem } from './feedback.js';
 import { FlightTimerSystem } from './flight-timer.js';
 import { FocusSystem } from './focus.js';
 import { InputTuningSystem } from './input-tuning.js';
+import { JarSystem } from './jar.js';
 import { LandingSystem } from './landing.js';
 import { SeatbackSystem } from './seatback.js';
 import { SoundscapeSystem } from './soundscape.js';
@@ -58,6 +59,7 @@ World.create(
   world.registerSystem(WindDownSystem);
   world.registerSystem(SeatbackSystem);
   world.registerSystem(StepsSystem);
+  world.registerSystem(JarSystem);
   world.registerSystem(FocusSystem);
   world.registerSystem(FeedbackSystem);
   world.registerSystem(SoundscapeSystem);

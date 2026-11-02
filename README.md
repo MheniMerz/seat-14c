@@ -34,6 +34,7 @@ device). Systems are registered in `src/index.ts`.
 | `src/dial.ts`           | Flight dial: pinch and twist, snaps to 5/10/25/45; look + pinch steps     |
 | `src/flight-timer.ts`   | Take off button, focus clock, progress line under the active card         |
 | `src/landing.ts`        | Chime, Done stack, Not yet, saving the flight, summary card               |
+| `src/jar.ts`            | Parking-lot jar: flick toward it or look + pinch to park a thought   |
 | `src/wind-down.ts`      | One-minute breathing guide after landing (4 s in, 6 s out), Skip      |
 | `src/audio.ts`          | Synthesized cabin sounds (WebAudio): clicks, detents, seat-belt chime     |
 | `src/feedback.ts`       | Click on every press, pick/drop sounds on every grab                      |
@@ -60,6 +61,10 @@ device). Systems are registered in `src/index.ts`.
   panels must be visible looking straight ahead; the rest within a 15° glance
   down. Raise / Lower moved to the seat back because the tray's sides were
   outside that width and the dial's hit area stole gaze from them.
+- A flick is a pinch released within 0.8 s after moving at least 8 cm within
+  50° of the jar's direction; letting go of a grabbed card never counts.
+  `tests/flick.mjs` drives the emulated hand inside the page so the gesture
+  runs at real speed.
 - Every action works by direct hands and by look + pinch. The dial steps
   through lengths on look + pinch rather than using four chips, because chips
   around a 7 cm dial would sit closer than gaze can separate (about 9 cm).
@@ -89,6 +94,7 @@ npx @iwsdk/cli browser run tests/desktop-click.mjs   # live-site emulator: click
 ./tests/calibration-input.sh  # timeout, resting hands, Raise / Lower, poke
 ./tests/boarding-input.sh     # tutorial by hand gestures, then by look + pinch
 ./tests/steps-input.sh        # steps reveal, tick by gaze and poke; cabin dims
+./tests/jar-input.sh          # flick vs. not-a-flick, look + pinch, review at check-in
 ./tests/wind-down-input.sh    # breathing pace, Skip by poke, summary after a minute
 ./tests/gaze-off.sh           # every look + pinch action by hand ray, gaze off
 ./tests/gaze-targets.sh       # gaze on each target hovers that target only

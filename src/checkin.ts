@@ -5,9 +5,12 @@ import { nextDestination } from './route.js';
 import {
   loadProgress,
   loadTasks,
+  loadThoughts,
   MAX_TASKS,
   newTaskId,
+  ParkedThought,
   saveTasks,
+  saveThoughts,
   Task,
 } from './storage.js';
 
@@ -23,6 +26,8 @@ export function mountCheckIn(world: World): void {
   const boardButton = root.querySelector<HTMLButtonElement>('#board')!;
   const status = root.querySelector<HTMLElement>('#board-status')!;
   const stats = root.querySelector<HTMLElement>('#stats')!;
+  const thoughtsSection = root.querySelector<HTMLElement>('#thoughts')!;
+  const thoughtList = root.querySelector<HTMLOListElement>('#thought-list')!;
   const emulatorNote = root.querySelector<HTMLElement>('#emulator-note')!;
   emulatorNote.hidden = !isDesktopEmulator();
   if (demoTimeScale() > 1) {
@@ -57,7 +62,80 @@ export function mountCheckIn(world: World): void {
   const render = () => {
     list.replaceChildren(...tasks.map((task, index) => renderTask(task, index)));
     addButton.disabled = tasks.length >= MAX_TASKS;
+    renderThoughts();
     updateBoard();
+  };
+
+  const namedTasks = () => tasks.filter((task) => task.title.trim() !== '');
+
+  const renderThoughts = () => {
+    const thoughts = loadThoughts();
+    thoughtsSection.hidden = thoughts.length === 0;
+    thoughtList.replaceChildren(
+      ...thoughts.map((thought, index) => renderThought(thought, index)),
+    );
+  };
+
+  const renderThought = (thought: ParkedThought, index: number): HTMLLIElement => {
+    const item = document.createElement('li');
+    item.className = 'thought';
+
+    const when = document.createElement('p');
+    when.className = 'thought-when';
+    const time = new Date(thought.at).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    when.textContent = thought.taskTitle
+      ? `${time} · minute ${thought.minute} of “${thought.taskTitle}”`
+      : `${time} · during a flight`;
+
+    const note = document.createElement('input');
+    note.type = 'text';
+    note.className = 'thought-note';
+    note.placeholder = 'What was it?';
+    note.maxLength = 60;
+    note.setAttribute('aria-label', `Parked thought ${index + 1}`);
+    note.dataset.testid = `thought-note-${index + 1}`;
+
+    const makeTask = document.createElement('button');
+    makeTask.type = 'button';
+    makeTask.className = 'secondary';
+    makeTask.textContent = 'Make it a task';
+    const full = () => namedTasks().length >= MAX_TASKS;
+    makeTask.disabled = true;
+    makeTask.title = full() ? 'Three tasks already; finish or remove one first.' : '';
+    note.addEventListener('input', () => {
+      makeTask.disabled = note.value.trim() === '' || full();
+    });
+    makeTask.addEventListener('click', () => {
+      const title = note.value.trim();
+      if (title === '' || full()) return;
+      // Fill the blank first row rather than adding next to it.
+      const blank = tasks.findIndex((task) => task.title.trim() === '');
+      const task: Task = { id: newTaskId(), title, subtasks: [], status: 'open' };
+      if (blank >= 0) tasks[blank] = task;
+      else tasks.push(task);
+      persist();
+      dropThought(thought.id);
+    });
+
+    const letGo = document.createElement('button');
+    letGo.type = 'button';
+    letGo.className = 'secondary';
+    letGo.textContent = 'Let it go';
+    letGo.addEventListener('click', () => dropThought(thought.id));
+
+    const actions = document.createElement('div');
+    actions.className = 'thought-actions';
+    actions.append(makeTask, letGo);
+    item.append(when, note, actions);
+    return item;
+  };
+
+  const dropThought = (id: string) => {
+    saveThoughts(loadThoughts().filter((thought) => thought.id !== id));
+    render();
   };
 
   const updateBoard = () => {

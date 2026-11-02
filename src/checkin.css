@@ -225,3 +225,43 @@ button:disabled {
 .emulator-note .demo-hint {
   margin: 0;
 }
+
+.thoughts[hidden] {
+  display: none;
+}
+
+.thoughts-intro {
+  margin: 0 0 12px;
+  color: var(--cabin-muted);
+}
+
+.thought-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thought {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px dashed var(--cabin-line);
+  border-radius: var(--radius);
+  background: var(--cabin-panel);
+}
+
+.thought-when {
+  margin: 0;
+  color: var(--cabin-muted);
+  font-size: 14px;
+}
+
+.thought-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

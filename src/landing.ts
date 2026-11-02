@@ -27,6 +27,7 @@ import {
   setFlightPhase,
   windDownStep,
 } from './flight-state.js';
+import { JarSystem } from './jar.js';
 import { FlightRecord, recordFlight } from './progress.js';
 import { loadOpenTasks } from './storage.js';
 import { createTextPanel, roundRect, TextPanel } from './text-panel.js';
@@ -205,7 +206,13 @@ export class LandingSystem extends createSystem({
       ctx.fillText(`+${record.miles.toLocaleString()} miles`, w / 2, 175);
       ctx.fillStyle = '#a6aed0';
       ctx.font = '500 32px system-ui, sans-serif';
-      ctx.fillText(`${Math.round(record.focusMinutes)} min of focus`, w / 2, 235);
+      const parked = this.world.getSystem(JarSystem)?.parkedThisFlight ?? 0;
+      ctx.fillText(
+        `${Math.round(record.focusMinutes)} min of focus` +
+          (parked > 0 ? ` · ${parked} thought${parked > 1 ? 's' : ''} in the jar` : ''),
+        w / 2,
+        235,
+      );
       ctx.fillText(
         `${progress.totalMiles.toLocaleString()} miles total · ${progress.streakDays}-day streak`,
         w / 2,

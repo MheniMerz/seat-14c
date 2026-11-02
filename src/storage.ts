@@ -128,3 +128,51 @@ export function loadProgress(): Progress {
 export function saveProgress(progress: Progress): boolean {
   return writeJson(PROGRESS_KEY, progress);
 }
+
+/**
+ * A stray thought parked in the jar mid-flight. Nothing is typed in the
+ * cabin, so it holds only when and during which task; the user writes down
+ * what it was on the check-in page after landing.
+ */
+export type ParkedThought = {
+  id: string;
+  /** ISO time it was parked. */
+  at: string;
+  /** Title of the task being flown, or '' if none. */
+  taskTitle: string;
+  /** Whole focus minutes into the flight. */
+  minute: number;
+};
+
+const THOUGHTS_KEY = 'seat14c.thoughts.v1';
+
+function isThought(value: unknown): value is ParkedThought {
+  const thought = value as ParkedThought;
+  return (
+    thought != null &&
+    typeof thought.id === 'string' &&
+    typeof thought.at === 'string' &&
+    typeof thought.taskTitle === 'string' &&
+    typeof thought.minute === 'number'
+  );
+}
+
+export function loadThoughts(): ParkedThought[] {
+  const stored = readJson(THOUGHTS_KEY);
+  return Array.isArray(stored) ? stored.filter(isThought) : [];
+}
+
+export function saveThoughts(thoughts: ParkedThought[]): boolean {
+  return writeJson(THOUGHTS_KEY, thoughts);
+}
+
+export function parkThought(taskTitle: string, minute: number): ParkedThought {
+  const thought: ParkedThought = {
+    id: `p-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+    at: new Date().toISOString(),
+    taskTitle,
+    minute,
+  };
+  saveThoughts([...loadThoughts(), thought]);
+  return thought;
+}

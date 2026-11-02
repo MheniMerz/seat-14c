@@ -65,6 +65,9 @@ export const LandingButton = createComponent('LandingButton', {
   action: { type: Types.Enum, default: LandingAction.Later, enum: LandingAction },
 });
 
+/** The parking-lot jar on the tray. */
+export const ThoughtJar = createComponent('ThoughtJar', {});
+
 /** Skips the breathing wind-down straight to the summary card. */
 export const WindDownSkip = createComponent('WindDownSkip', {});
 

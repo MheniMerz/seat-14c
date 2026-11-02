@@ -15,6 +15,7 @@ import {
   StepRow,
   TakeoffButton,
   TaskCard,
+  ThoughtJar,
   TrayHeightButton,
   TutorialBody,
   TutorialTarget,
@@ -34,4 +35,5 @@ export default defineComponents([
   TutorialTarget,
   TutorialBody,
   WindDownSkip,
+  ThoughtJar,
 ]);
