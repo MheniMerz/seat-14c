@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Seat 14C film</title>
+    <style>
+      html, body { margin: 0; background: #0a1428; }
+      canvas { display: block; width: 100vw; height: auto; }
+    </style>
+  </head>
+  <body>
+    <script src="./dist/film.js"></script>
+    <script>
+      // Preview: ?t=12 shows one frame; no parameter plays it in real time.
+      const t = new URLSearchParams(location.search).get('t');
+      if (t != null) window.renderAt(Number(t));
+      else {
+        const start = performance.now();
+        const tick = () => { window.renderAt(((performance.now() - start) / 1000) % window.FILM.DURATION); requestAnimationFrame(tick); };
+        tick();
+      }
+    </script>
+  </body>
+</html>

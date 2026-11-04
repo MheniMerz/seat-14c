@@ -142,6 +142,16 @@ npx @iwsdk/cli browser run tests/desktop-click.mjs   # live-site emulator: click
 The `.sh` tests drive emulated hands and gaze through `npx @iwsdk/cli xr`; the
 only dev shortcut in `flight-e2e.sh` is a faster flight clock.
 
+## Demo film
+
+`video/` holds the demo film: a motion-graphics cut of the demo script in
+Three.js (`film.ts`), an original synthesized score (`score.py`) and
+YouTube captions (`captions.srt`). `./video/render-all.sh` renders it frame
+by frame in headless Chromium (four workers, about 25 minutes) and writes
+`video/out/seat-14c-demo.mp4`. Preview any moment by serving the repo and
+opening `video/index.html?t=42` after one render (or after
+`npx esbuild video/film.ts --bundle --outfile=video/dist/film.js`).
+
 ## Deploy
 
 Every push to `main` builds and publishes to GitHub Pages
