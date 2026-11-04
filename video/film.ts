@@ -1008,7 +1008,7 @@ function sceneFocus(t: number, local: number) {
     // Flick: a hand pinches the air, flicks toward the jar; a slip arcs in.
     bigHand.root.visible = local < 19;
     const jarWorld = tp.clone().add(v3(0.33, 0.2, 0.15));
-    const start = tp.clone().add(v3(0.05, 0.42, 0.42));
+    const start = tp.clone().add(v3(-0.02, 0.24, 0.38));
     const flick = seg(local, 14.2, 14.8, (x) => clamp01(x));
     bigHand.root.position.copy(P(start, start.clone().add(v3(0.2, -0.08, -0.05)), flick));
     bigHand.root.rotation.set(-0.4, 0.4 - flick * 0.4, 0.3);
@@ -1063,6 +1063,7 @@ function sceneLanding(t: number, local: number) {
   pool.position.copy(tp).add(v3(0, 1.6, 0.2));
   pool.target.position.copy(tp);
   cards.forEach((c, i) => { c.g.visible = i === 0; });
+  drawDial(25, 'Landed');
   // Chime ripples spread across the floor.
   ripples.forEach((r, i) => {
     const k = clamp01((local - i * 0.35) / 2.6);
@@ -1086,7 +1087,7 @@ function sceneLanding(t: number, local: number) {
   } else {
     // Crane up and away: the route map spreads across the floor below.
     mapGroup.visible = true;
-    mapGroup.position.set(tp.x + 0.9, 0.02, tp.z + 1.8);
+    mapGroup.position.set(tp.x + 1.6, 0.02, tp.z + 2.6);
     const grow = seg(local, 12, 15.5, smooth);
     const reach = 0.2 * grow; // Gate 14 → Harbor Point is the first fifth.
     routeTube.geometry.setDrawRange(0, Math.floor(routeTube.geometry.index!.count * reach));
@@ -1094,7 +1095,7 @@ function sceneLanding(t: number, local: number) {
     const ahead = routeCurve.getTangent(Math.max(0.0001, reach));
     planeIcon.rotation.set(Math.PI / 2, 0, -Math.atan2(ahead.x, ahead.z));
     const k = seg(local, 10.5, 18, smooth);
-    const cam = P(v3(tp.x + 0.3, tp.y + 0.9, tp.z + 1.4), v3(tp.x + 2.0, 3.3, tp.z + 5.4), k);
+    const cam = P(v3(tp.x + 0.3, tp.y + 0.9, tp.z + 1.4), v3(tp.x + 2.9, 3.0, tp.z + 6.4), k);
     shot(cam, P(tp, mapGroup.position.clone().add(v3(1.3, 0, -0.3)), k), lerp(34, 40, k), 0);
     destLabels.forEach((l) => l.lookAt(camera.position));
     // Postcard drifts down onto the tray in the last shot.
