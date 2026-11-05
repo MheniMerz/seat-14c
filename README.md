@@ -146,9 +146,12 @@ only dev shortcut in `flight-e2e.sh` is a faster flight clock.
 
 `video/` holds the demo film: a motion-graphics cut of the demo script in
 Three.js (`film.ts`), an original synthesized score (`score.py`) and
-YouTube captions (`captions.srt`). `./video/render-all.sh` renders it frame
+YouTube captions (`captions.srt`). `voiceover.py` speaks the script with
+Kokoro, an open neural TTS model that runs locally (setup in its docstring),
+and mixes it over the score with the music ducking under the voice. `./video/render-all.sh` renders it frame
 by frame in headless Chromium (four workers, about 25 minutes) and writes
-`video/out/seat-14c-demo.mp4`. Preview any moment by serving the repo and
+`video/out/seat-14c-demo.mp4`; run `voiceover.py` afterwards and mux
+`video/out/mix.wav` over the picture for the voiced cut. Preview any moment by serving the repo and
 opening `video/index.html?t=42` after one render (or after
 `npx esbuild video/film.ts --bundle --outfile=video/dist/film.js`).
 
